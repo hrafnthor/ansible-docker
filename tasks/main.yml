@@ -1,0 +1,44 @@
+- name: assert | docker | assert input config
+  ansible.utils.validate:
+    data: "{{ docker }}"
+    criteria: "{{ lookup('file', 'assertions/criteria/docker-criteria.json') | from_json }}"
+    engine: ansible.utils.jsonschema
+  when:
+    - docker is defined
+
+- name: docker | apt | add repository
+  ansible.builtin.deb822_repository:
+    name: docker
+    types: [deb]
+    uris: [https://download.docker.com/linux/ubuntu]
+    signed_by: "https://download.docker.com/linux/ubuntu/gpg"
+    suites: ["{{ ansible_distribution_release }}"]
+    components: [stable]
+    state: present
+    enabled: true
+  register: docker_deb_repo
+  when:
+    - docker is defined
+
+- name: docker | apt | update
+  ansible.builtin.apt:
+    update_cache: yes
+  when:
+    - docker_deb_repo is defined
+    - docker_deb_repo.changed
+
+- name: software | docker | install docker-ce
+  tags: software,docker
+  ansible.builtin.apt:
+    name: docker-ce
+    state: latest
+  when:
+    - docker is defined
+
+- name: software | docker | install docker-compose
+  ansible.builtin.get_url:
+    url: "https://github.com/docker/compose/releases/download/{{ docker.compose.version }}/docker-compose-linux-x86_64"
+    dest: "/usr/local/bin/docker-compose"
+    mode: '0755'
+  when:
+    - docker.compose is defined
