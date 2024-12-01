@@ -1,0 +1,15 @@
+# -----------------------------------------------------------------------------
+#
+# This file contains tasks related to installing the Docker engine via
+# the aptitude package manager.
+#
+# -----------------------------------------------------------------------------
+
+- name: docker | apt | update
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: docker | apt | install docker-ce
+  ansible.builtin.apt:
+    name: "{{ docker_package_name }}"
+    state: "{{ 'absent' if docker.remove is defined and docker.remove else 'present' if docker.version is defined else 'latest' }}"
