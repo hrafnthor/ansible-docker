@@ -37,9 +37,8 @@
                             {
                                 "$ref": "#/definitions/non-empty-string"
                             },
-                            "destination":
-                            {
-                                "$ref": "#/definitions/non-empty-string"
+                            "destination": {
+                                 "$ref": "#/definitions/non-empty-string"
                             },
                             "force":
                             {
@@ -60,13 +59,58 @@
                             "remove":
                             {
                                 "type": "boolean"
+                            },
+                            "secrets":
+                            {
+                                "type": "array",
+                                "items":
+                                {
+                                    "type": "object",
+                                    "properties":
+                                    {
+                                        "name":
+                                        {
+                                            "$ref": "#/definitions/non-empty-string"
+                                        },
+                                        "value":
+                                        {
+                                            "$ref": "#/definitions/non-empty-string"
+                                        },
+                                        "variable":
+                                        {
+                                            "$ref": "#/definitions/non-empty-string"
+                                        },
+                                        "remove":
+                                        {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required":
+                                    [
+                                        "name"
+                                    ],
+                                    "oneOf":
+                                    [
+                                        {
+                                            "required":
+                                            [
+                                                "value"
+                                            ]
+                                        },
+                                        {
+                                            "required":
+                                            [
+                                                "variable"
+                                            ]
+                                        }
+                                    ]
+                                }
                             }
                         },
                         "required":
                         [
                             "name",
-                            "source",
-                            "destination"
+                            "source"
                         ]
                     }
                 }
