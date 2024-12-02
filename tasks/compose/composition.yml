@@ -5,9 +5,13 @@
 #
 # -----------------------------------------------------------------------------
 
-- name: docker | compose | create composition destination
+- name: docker | compose | composition path
+  ansible.builtin.set_fact:
+    project_dir: "{{ composition.destination if composition.destination is defined else '/srv/' + composition.name }}"
+
+- name: docker | compose | manage composition directory
   ansible.builtin.file:
-    path: "{{ composition.destination }}"
+    path: "{{ project_dir }}"
     owner: "{{ composition.user | default('root') }}"
     group: "{{ composition.group | default('root') }}"
     mode: "{{ composition.mode | default('0755') }}"
@@ -16,10 +20,16 @@
 - name: docker | compose | copy compose file
   ansible.builtin.copy:
     src: "{{ composition.source }}"
-    dest: "{{ composition.destination }}"
+    dest: "{{ project_dir }}"
     force: "{{ composition.force | default(false) }}"
     owner: "{{ composition.user | default('root') }}"
     group: "{{ composition.group | default('root') }}"
     mode: "{{ composition.mode | default('0644') }}"
   when:
     - composition.remove is not defined or not composition.remove
+
+- name: docker | compose | manage secrets
+  ansible.builtin.include_tasks: secrets/main.yml
+  when:
+    - composition.remove is not defined or not composition.remove
+    - composition.secrets is defined
