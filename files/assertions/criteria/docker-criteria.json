@@ -20,6 +20,55 @@
                 "version":
                 {
                     "$ref": "#/definitions/non-empty-string"
+                },
+                "compositions":
+                {
+                    "type": "array",
+                    "items":
+                    {
+                        "type": "object",
+                        "properties":
+                        {
+                            "name":
+                            {
+                                "$ref": "#/definitions/non-empty-string"
+                            },
+                            "source":
+                            {
+                                "$ref": "#/definitions/non-empty-string"
+                            },
+                            "destination":
+                            {
+                                "$ref": "#/definitions/non-empty-string"
+                            },
+                            "force":
+                            {
+                                "type": "boolean"
+                            },
+                            "user":
+                            {
+                                "$ref": "#/definitions/non-empty-string"
+                            },
+                            "group":
+                            {
+                                "$ref": "#/definitions/non-empty-string"
+                            },
+                            "mode":
+                            {
+                                "$ref": "#/definitions/non-empty-string"
+                            },
+                            "remove":
+                            {
+                                "type": "boolean"
+                            }
+                        },
+                        "required":
+                        [
+                            "name",
+                            "source",
+                            "destination"
+                        ]
+                    }
                 }
             },
             "required":

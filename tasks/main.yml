@@ -8,3 +8,8 @@
 
 - name: docker | install
   ansible.builtin.include_tasks: install/main.yml
+
+- name: docker | compose
+  ansible.builtin.include_tasks: compose/main.yml
+  when:
+    - docker.compose is defined
