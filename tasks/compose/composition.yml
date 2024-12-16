@@ -1,0 +1,41 @@
+# -----------------------------------------------------------------------------
+#
+# This file contains tasks related to copying over, configuring and running
+# a composition. It expects to find a dict object called 'composition'.
+#
+# -----------------------------------------------------------------------------
+
+- name: docker | compose | composition path
+  ansible.builtin.set_fact:
+    project_dir: "{{ composition.destination if composition.destination is defined else '/srv/' + composition.name }}"
+
+- name: docker | compose | manage composition directory
+  ansible.builtin.file:
+    path: "{{ project_dir }}"
+    owner: "{{ composition.user | default('root') }}"
+    group: "{{ composition.group | default('root') }}"
+    mode: "{{ composition.mode | default('0755') }}"
+    state: "{{ 'absent' if composition.remove is defined and composition.remove else 'directory' }}"
+
+- name: docker | compose | copy compose file
+  ansible.builtin.copy:
+    src: "{{ composition.source }}"
+    dest: "{{ project_dir }}"
+    force: "{{ composition.force | default(false) }}"
+    owner: "{{ composition.user | default('root') }}"
+    group: "{{ composition.group | default('root') }}"
+    mode: "{{ composition.mode | default('0644') }}"
+  when:
+    - composition.remove is not defined or not composition.remove
+
+- name: docker | compose | manage secrets
+  ansible.builtin.include_tasks: secrets/main.yml
+  when:
+    - composition.remove is not defined or not composition.remove
+    - composition.secrets is defined
+
+- name: docker | compose | manage environment
+  ansible.builtin.include_tasks: environment/main.yml
+  when:
+    - composition.remove is not defined or not composition.remove
+    - composition.environment is defined

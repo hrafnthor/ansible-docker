@@ -1,0 +1,33 @@
+# -----------------------------------------------------------------------------
+#
+# This file contains tasks related to configuring installation of Docker
+# for an Debian based system.
+#
+# -----------------------------------------------------------------------------
+
+- name: docker | debian | add repository
+  ansible.builtin.deb822_repository:
+    name: docker
+    types: [deb]
+    uris: ["https://download.docker.com/linux/{{ ansible_distribution | lower }}"]
+    signed_by: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+    suites: ["{{ ansible_distribution_release }}"]
+    components: [stable]
+    state: present
+    enabled: true
+  register: docker_repo_state
+
+- name: docker | debian | update apt
+  ansible.builtin.apt:
+    update_cache: yes
+  when:
+    - docker_repo_state.changed
+
+- name: docker | apt | set package name
+  ansible.builtin.set_fact:
+    docker_package_name: "{{ 'docker-ce=' + docker.version if docker.version is defined else 'docker-ce' }}"
+
+- name: docker | apt | install docker-ce
+  ansible.builtin.apt:
+    name: "{{ docker_package_name }}"
+    state: "{{ 'absent' if docker.remove is defined and docker.remove else 'present' if docker.version is defined else 'latest' }}"

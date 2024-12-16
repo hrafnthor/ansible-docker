@@ -1,0 +1,15 @@
+# -----------------------------------------------------------------------------
+#
+# This file is the entry into the installation, configuration and usage of
+# Docker compose.
+#
+# -----------------------------------------------------------------------------
+
+- name: docker | compose | configure composition
+  ansible.builtin.include_tasks: composition.yml
+  loop: "{{ docker.compose.compositions }}"
+  loop_control:
+    loop_var: composition
+  when:
+    - docker.compose is defined
+    - docker.compose.compositions is defined
