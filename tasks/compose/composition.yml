@@ -33,3 +33,9 @@
   when:
     - composition.remove is not defined or not composition.remove
     - composition.secrets is defined
+
+- name: docker | compose | manage environment
+  ansible.builtin.include_tasks: environment/main.yml
+  when:
+    - composition.remove is not defined or not composition.remove
+    - composition.environment is defined
