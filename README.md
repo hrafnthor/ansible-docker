@@ -62,8 +62,8 @@ Before the role can be used it needs to be added to the machine running the play
 2. Add the following definition inside the `requirements.yml` file:
 
 ```yml
-- name: hth-android-studio
-  src: https://github.com/hrafnthor/ansible-android-studio.git
+- name: hth-docker
+  src: https://github.com/hrafnthor/ansible-docker.git
   scm: git
   version: <tag or branch to use>
 ```
