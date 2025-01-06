@@ -9,26 +9,49 @@ All values are optional unless otherwise marked as required
 
 ```yaml
 docker:
-  version: string                     Indicates the version to install. If empty, latest will be used.
-  remove: bool                        Indicates if `Docker` should be remove from the system. Default false.
+  version: [string]                     Indicates the version to install. If empty, latest will be used. Can be set to 'latest' for the latest version.
+  remove: [bool]                        Indicates if `Docker` should be remove from the system. Default false.
   compose:
-    version: string                   [Required] Indicates the version of `Docker Compose` to install.
+    version: [string]                   [Required] Indicates the version of `Docker Compose` to install. Can be set to 'latest' for the latest version.
+    remove: [bool]
     compositions:
-      - name: string                  [Required]	Used as project directory name if `destination` is not found.
-        source: string                [Required] The local path to the `Docker Compose` project.
-        destination: string           The remote location where the project directory should be.
-        user: string                  The remote user who should own the project directory, else `root`.
-        group: string                 The remote group who should own the project directory, else `root`.
+      - name: [string]                  [Required]	Used as project directory name if `destination` is not found.
+        source: [string]                [Required] The local path to the `Docker Compose` project.
+        destination: [string]           The remote location where the project directory should be.
+        user: [string]                  The remote user who should own the project directory, else `root`.
+        group: [string]                 The remote group who should own the project directory, else `root`.
         secrets:
-          - name: string              [Required] The name of the file containing the secret at `<project-dir>/secrets/name`.
-            value: string | number    The value to set in the secret file. Mutually exlusive with `variable`.
-            variable: string          The variable holding the value to set in the secret file. Mutually exlusive with `value`.
-            remove: bool              Indicates that this named secret should be removed.
+          - name: [string]              [Required] The name of the file containing the secret at `<project-dir>/secrets/name`.
+            value: [string | number]    The value to set in the secret file. Mutually exlusive with `variable`.
+            variable: [string]          The variable holding the value to set in the secret file. Mutually exlusive with `value`.
+            remove: [bool]              Indicates that this named secret should be removed.
         environment:
-          - name: string              [Required] The name of the variable.
-            value: string | number    The value to set the variable to. Mutually exlusive with `variable`.
-            variable: string          The variable holding the value to set the env variable to. Mutually exlusive with `value`.
-            remove: true              Indicates that this named variable should be removed.
+          - name: [string]              [Required] The name of the variable.
+            value: [string | number]    The value to set the variable to. Mutually exlusive with `variable`.
+            variable: [string]          The variable holding the value to set the env variable to. Mutually exlusive with `value`.
+            remove: [bool]              Indicates that this named variable should be removed.
+```
+
+#### Example
+
+```yaml
+docker:
+  version: "5:27.4.1-1~ubuntu.22.04~jammy"
+  compose:
+    version: "2.32.1-1~ubuntu.22.04~jammy"
+    compositions:
+      - name: "example-project"
+        source: "/docker/example-project/docker-compose.yml"
+        secrets:
+          - name: "db-user"
+            variable: "secret-db-user"
+          - name: "db-password"
+            variable: "secret-db-password"
+        environment:
+          - name: "db-port" # Remove previously set port
+            remove: true
+          - name: "db-port" # Set new port information
+            value: 1234
 ```
 
 ### Compositions
