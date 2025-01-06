@@ -4,15 +4,7 @@
 #
 # -----------------------------------------------------------------------------
 
-- name: docker | install | install docker debian
+- name: "Docker | Install | Install Docker for Debian systems"
   ansible.builtin.include_tasks: debian.yml
   when:
     - ansible_distribution in ["Ubuntu", "Debian"]
-
-- name: docker | compose | install docker compose
-  ansible.builtin.get_url:
-    url: "https://github.com/docker/compose/releases/download/{{ docker.compose.version }}/docker-compose-linux-x86_64"
-    dest: "/usr/local/bin/docker-compose"
-    mode: '0755'
-  when:
-    - docker.compose is defined
