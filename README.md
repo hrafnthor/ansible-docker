@@ -30,6 +30,13 @@ docker:
             value: [string | number]    The value to set the variable to. Mutually exlusive with `variable`.
             variable: [string]          The variable holding the value to set the env variable to. Mutually exlusive with `value`.
             remove: [bool]              Indicates that this named variable should be removed.
+        extras:
+          - source: [string]            [required] The source to copy
+            destination: [string]       [required] The destination relative to [composition.destination] to copy to
+            owner: [string]             The remote user to set as owner of the copied values. Defaults to `root`
+            group: [string]             The remote group that owns the copied values. Defaults to `root`
+            mode: [string]              The mode to set on the copied values. Defaults to `0755`
+            force: [boolean]            Indicates if the extra should be forcefully copied. Defaults to false.
 ```
 
 #### Example

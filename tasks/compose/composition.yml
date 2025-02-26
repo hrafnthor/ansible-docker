@@ -39,3 +39,15 @@
   when:
     - composition.remove is not defined or not composition.remove
     - composition.environment is defined
+
+- name: docker | compose | copy extras
+  ansible.builtin.copy:
+    src: "{{ item.source }}"
+    dest: "{{ project_dir }}/{{ item.destination }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    mode: "{{ item.mode | default('0755') }}"
+    force: "{{ item.force | default(false) }}"
+  loop: "{{ composition.extras }}"
+  when:
+    - composition.extras is defined
