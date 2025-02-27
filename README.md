@@ -1,5 +1,5 @@
 # Ansible-Docker
-An Ansible role for installing configuring Docker projects on a system.
+An Ansible role for installing and configuring Docker projects on a system.
 
 ---
 
