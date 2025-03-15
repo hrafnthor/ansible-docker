@@ -105,7 +105,7 @@
                                     ]
                                 }
                             },
-                            "environment":
+                            "environments":
                             {
                                 "type": "array",
                                 "items":
@@ -113,47 +113,79 @@
                                     "type": "object",
                                     "properties":
                                     {
-                                        "name":
+                                        "path":
+                                        {
+                                            "type": "string"
+                                        },
+                                        "mode":
                                         {
                                             "$ref": "#/definitions/non-empty-string"
                                         },
-                                        "value":
+                                        "user":
                                         {
                                             "$ref": "#/definitions/non-empty-string"
                                         },
-                                        "variable":
+                                        "group":
                                         {
                                             "$ref": "#/definitions/non-empty-string"
                                         },
-                                        "remove":
+                                        "entries":
                                         {
-                                            "type": "boolean"
+                                            "type": "array",
+                                            "items":
+                                            {
+                                                "type": "object",
+                                                "properties":
+                                                {
+                                                    "name":
+                                                    {
+                                                        "$ref": "#/definitions/non-empty-string"
+                                                    },
+                                                    "value":
+                                                    {
+                                                        "$ref": "#/definitions/non-empty-string"
+                                                    },
+                                                    "variable":
+                                                    {
+                                                        "$ref": "#/definitions/non-empty-string"
+                                                    },
+                                                    "remove":
+                                                    {
+                                                        "type": "boolean"
+                                                    }
+                                                },
+                                                "required":
+                                                [
+                                                    "name"
+                                                ],
+                                                "oneOf":
+                                                [
+                                                    {
+                                                        "required":
+                                                        [
+                                                            "value"
+                                                        ]
+                                                    },
+                                                    {
+                                                        "required":
+                                                        [
+                                                            "variable"
+                                                        ]
+                                                    },
+                                                    {
+                                                        "required":
+                                                        [
+                                                            "remove"
+                                                        ]
+                                                    }
+                                                ]
+                                            }
                                         }
                                     },
                                     "required":
                                     [
-                                        "name"
-                                    ],
-                                    "oneOf":
-                                    [
-                                        {
-                                            "required":
-                                            [
-                                                "value"
-                                            ]
-                                        },
-                                        {
-                                            "required":
-                                            [
-                                                "variable"
-                                            ]
-                                        },
-                                        {
-                                            "required":
-                                            [
-                                                "remove"
-                                            ]
-                                        }
+                                        "path",
+                                        "entries"
                                     ]
                                 }
                             },

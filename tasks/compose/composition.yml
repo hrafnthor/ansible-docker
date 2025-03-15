@@ -38,7 +38,7 @@
   ansible.builtin.include_tasks: environment/main.yml
   when:
     - composition.remove is not defined or not composition.remove
-    - composition.environment is defined
+    - composition.environments is defined
 
 - name: docker | compose | copy extras
   ansible.builtin.copy:

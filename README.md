@@ -25,11 +25,17 @@ docker:
             value: [string | number]    The value to set in the secret file. Mutually exlusive with `variable`.
             variable: [string]          The variable holding the value to set in the secret file. Mutually exlusive with `value`.
             remove: [bool]              Indicates that this named secret should be removed.
-        environment:
-          - name: [string]              [Required] The name of the variable.
-            value: [string | number]    The value to set the variable to. Mutually exlusive with `variable`.
-            variable: [string]          The variable holding the value to set the env variable to. Mutually exlusive with `value`.
-            remove: [bool]              Indicates that this named variable should be removed.
+        environments:
+          - mode: [string]              The access mode that the environment file will be given. Defaults to '0644'
+            user: [string]              The user that should own the .env file. If not set defaults to the composition user. If they are not set, defaults to root.
+            group: [string]             The group that should own the .env file. If not set defaults to the composition group. If they are not set, defaults to root.
+            path: [string]              [required] The path relative to the source directory where the .env file should be created.
+            remove: [bool]              Indicates if the environment file at the given path should be removed. If true, no file will be created. Defaults to false.
+            entries:                    [required] Contains the environment variable entries to place in the .env file.
+            - name: [string]            [Required] The name of the variable.
+              value: [string | number]  The value to set the variable to. Mutually exlusive with `variable`.
+              variable: [string]        The variable holding the value to set the env variable to. Mutually exlusive with `value`.
+              remove: [bool]            Indicates that this named variable should be removed.
         extras:
           - source: [string]            [required] The source to copy
             destination: [string]       [required] The destination relative to [composition.destination] to copy to
