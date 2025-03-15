@@ -4,22 +4,8 @@
 #
 # -----------------------------------------------------------------------------
 
-- name: "docker | env | create environment file"
-  ansible.builtin.file:
-    path: "{{ project_dir }}/.env"
-    state: "touch"
-    owner: "{{ composition.user | default('root') }}"
-    group: "{{ composition.group | default('root')}}"
-    modification_time: "preserve"
-    access_time: "preserve"
-    mode: "0644"
-  when:
-    - composition.environment is defined
-
-- name: "docker | compose | manage environment"
-  ansible.builtin.include_tasks: manage_variable.yml
-  loop: "{{ composition.environment }}"
+- name: "docker | environment | manage environments"
+  ansible.builtin.include_tasks: environment.yml
+  loop: "{{ composition.environments }}"
   loop_control:
     loop_var: env
-  when:
-    - composition.environment is defined

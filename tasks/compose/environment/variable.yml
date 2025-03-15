@@ -1,0 +1,32 @@
+# -----------------------------------------------------------------------------
+#
+# This file contains tasks related to adding Docker environment variables.
+# It expects a dict named 'entry' to be present.
+#
+# -----------------------------------------------------------------------------
+
+- name: "docker | env | set environment variable from value"
+  ansible.builtin.lineinfile:
+    path: "/{{ environment_file }}"
+    regexp: "^{{ entry.name }}="
+    line: "{{ entry.name }}='{{ entry.value }}'"
+  when:
+    - entry.remove is not defined or not entry.remove
+    - entry.value is defined
+
+- name: "docker | env | set environment variable from variable"
+  ansible.builtin.lineinfile:
+    path: "/{{ environment_file }}"
+    regexp: "^{{ entry.name }}="
+    line: "{{ entry.name }}='{{ lookup('vars', entry.variable) }}'"
+  when:
+    - entry.remove is not defined or not entry.remove
+    - entry.variable is defined
+
+- name: "docker | env | remove environment variable"
+  ansible.builtin.lineinfile:
+     path: "/{{ environment_file }}"
+     regexp: "^{{ entry.name }}="
+     state: "absent"
+  when:
+    - entry.remove is defined and entry.remove

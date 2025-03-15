@@ -1,0 +1,39 @@
+# -----------------------------------------------------------------------------
+#
+# This file contains tasks related to managing env variables under 
+# a specific path.
+#
+# -----------------------------------------------------------------------------
+
+
+- name: "docker | environment | set file path"
+  ansible.builtin.set_fact:
+    environment_file: "{{ project_dir }}/{{ env.path }}/.env"
+
+- name: "docker | environment | create file"
+  ansible.builtin.file:
+    path: "/{{ environment_file }}"
+    state: "touch"
+    owner: "{{ env.user | default(composition.user | default('root')) }}"
+    group: "{{ env.group | default(composition.group | default('root')) }}"
+    modification_time: "preserve"
+    access_time: "preserve"
+    mode: "{{ env.mode | default('0644')}}"
+  when:
+    - env.remove is not defined or not env.remove
+
+- name: "docker | environment | manage entries"
+  ansible.builtin.include_tasks: variable.yml
+  loop: "{{ env.entries }}"
+  loop_control:
+    loop_var: entry
+  when:
+    - env.remove is not defined or not env.remove
+
+- name: "docker | environment | remove file"
+  ansible.builtin.file:
+    path: "/{{ environment_file }}"
+    state: "absent"
+  when:
+    - env.remove is defined
+    - env.remove
