@@ -49,7 +49,7 @@
                             {
                                 "type": "boolean"
                             },
-                            "user":
+                            "owner":
                             {
                                 "$ref": "#/definitions/non-empty-string"
                             },
@@ -79,7 +79,29 @@
                                         },
                                         "destination":
                                         {
-                                            "$ref": "#/definitions/non-empty-string"
+                                            "type": "object",
+                                            "properties":
+                                            {
+                                                "path":
+                                                {
+                                                    "$ref": "#/definitions/non-empty-string"
+                                                },
+                                                "is_file": {
+                                                    "type": "boolean"
+                                                },
+                                                "mode":
+                                                {
+                                                    "$ref": "#/definitions/non-empty-string"
+                                                },
+                                                "skip_path":
+                                                {
+                                                    "$ref": "#/definitions/non-empty-string"
+                                                }
+                                            },
+                                            "required":
+                                            [
+                                                "path"
+                                            ]
                                         },
                                         "owner":
                                         {
@@ -121,7 +143,7 @@
                                         {
                                             "$ref": "#/definitions/non-empty-string"
                                         },
-                                        "user":
+                                        "owner":
                                         {
                                             "$ref": "#/definitions/non-empty-string"
                                         },

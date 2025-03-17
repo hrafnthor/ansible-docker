@@ -5,16 +5,31 @@
 #
 # -----------------------------------------------------------------------------
 
+- name: "docker | environment | set directory path"
+  ansible.builtin.set_fact:
+    environment_path: "{{ project_dir }}/{{ env.path }}"
+
+- name: "docker | environment | create directory"
+  ansible.builtin.file:
+    path: "{{ environment_path }}"
+    owner: "{{ env.owner | default(composition.user | default('root')) }}"
+    group: "{{ env.group | default(composition.group | default('root')) }}"
+    modification_time: "preserve"
+    access_time: "preserve"
+    state: "directory"
+    recurse: true
+  when:
+    - env.remove is not defined or not env.remove
 
 - name: "docker | environment | set file path"
   ansible.builtin.set_fact:
-    environment_file: "{{ project_dir }}/{{ env.path }}/.env"
+    environment_file: "{{ environment_path }}/.env"
 
 - name: "docker | environment | create file"
   ansible.builtin.file:
-    path: "/{{ environment_file }}"
+    path: "{{ environment_file }}"
     state: "touch"
-    owner: "{{ env.user | default(composition.user | default('root')) }}"
+    owner: "{{ env.owner | default(composition.user | default('root')) }}"
     group: "{{ env.group | default(composition.group | default('root')) }}"
     modification_time: "preserve"
     access_time: "preserve"
@@ -32,7 +47,7 @@
 
 - name: "docker | environment | remove file"
   ansible.builtin.file:
-    path: "/{{ environment_file }}"
+    path: "{{ environment_file }}"
     state: "absent"
   when:
     - env.remove is defined

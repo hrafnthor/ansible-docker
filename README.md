@@ -18,7 +18,7 @@ docker:
       - name: [string]                  [Required]	Used as project directory name if `destination` is not found.
         source: [string]                [Required] The local path to the `Docker Compose` project.
         destination: [string]           The remote location where the project directory should be.
-        user: [string]                  The remote user who should own the project directory, else `root`.
+        owner: [string]                  The remote user who should own the project directory, else `root`.
         group: [string]                 The remote group who should own the project directory, else `root`.
         secrets:
           - name: [string]              [Required] The name of the file containing the secret at `<project-dir>/secrets/name`.
@@ -27,7 +27,7 @@ docker:
             remove: [bool]              Indicates that this named secret should be removed.
         environments:
           - mode: [string]              The access mode that the environment file will be given. Defaults to '0644'
-            user: [string]              The user that should own the .env file. If not set defaults to the composition user. If they are not set, defaults to root.
+            owner: [string]              The user that should own the .env file. If not set defaults to the composition user. If they are not set, defaults to root.
             group: [string]             The group that should own the .env file. If not set defaults to the composition group. If they are not set, defaults to root.
             path: [string]              [required] The path relative to the source directory where the .env file should be created.
             remove: [bool]              Indicates if the environment file at the given path should be removed. If true, no file will be created. Defaults to false.
@@ -38,7 +38,11 @@ docker:
               remove: [bool]            Indicates that this named variable should be removed.
         extras:
           - source: [string]            [required] The source to copy
-            destination: [string]       [required] The destination relative to [composition.destination] to copy to
+            destination:
+              path: [string]            [required] The destination relative to [composition.destination] to copy to. The path will be created if it doesn't exist and the owner and group of the extra if defined. Otherwise set to the composition owner and group if defined. Otherwise root.
+              is_file: [bool]           Indicates if the given path ends in a file name.
+              mode: [string]            The mode to set the path. Defaults to 0755.
+              skip_path: [string]       The subpath of the path that should not have it's mode and ownership changed. Has to be a subpath of the given path.
             owner: [string]             The remote user to set as owner of the copied values. Defaults to `root`
             group: [string]             The remote group that owns the copied values. Defaults to `root`
             mode: [string]              The mode to set on the copied values. Defaults to `0755`
