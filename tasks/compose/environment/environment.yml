@@ -12,7 +12,7 @@
 - name: "docker | environment | create directory"
   ansible.builtin.file:
     path: "{{ environment_path }}"
-    owner: "{{ env.user | default(composition.user | default('root')) }}"
+    owner: "{{ env.owner | default(composition.user | default('root')) }}"
     group: "{{ env.group | default(composition.group | default('root')) }}"
     modification_time: "preserve"
     access_time: "preserve"
@@ -29,7 +29,7 @@
   ansible.builtin.file:
     path: "{{ environment_file }}"
     state: "touch"
-    owner: "{{ env.user | default(composition.user | default('root')) }}"
+    owner: "{{ env.owner | default(composition.user | default('root')) }}"
     group: "{{ env.group | default(composition.group | default('root')) }}"
     modification_time: "preserve"
     access_time: "preserve"

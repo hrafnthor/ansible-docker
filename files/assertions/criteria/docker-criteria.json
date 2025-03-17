@@ -121,7 +121,7 @@
                                         {
                                             "$ref": "#/definitions/non-empty-string"
                                         },
-                                        "user":
+                                        "owner":
                                         {
                                             "$ref": "#/definitions/non-empty-string"
                                         },

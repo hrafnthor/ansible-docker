@@ -27,7 +27,7 @@ docker:
             remove: [bool]              Indicates that this named secret should be removed.
         environments:
           - mode: [string]              The access mode that the environment file will be given. Defaults to '0644'
-            user: [string]              The user that should own the .env file. If not set defaults to the composition user. If they are not set, defaults to root.
+            owner: [string]              The user that should own the .env file. If not set defaults to the composition user. If they are not set, defaults to root.
             group: [string]             The group that should own the .env file. If not set defaults to the composition group. If they are not set, defaults to root.
             path: [string]              [required] The path relative to the source directory where the .env file should be created.
             remove: [bool]              Indicates if the environment file at the given path should be removed. If true, no file will be created. Defaults to false.
