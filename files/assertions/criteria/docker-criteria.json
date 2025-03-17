@@ -86,7 +86,8 @@
                                                 {
                                                     "$ref": "#/definitions/non-empty-string"
                                                 },
-                                                "is_file": {
+                                                "is_file":
+                                                {
                                                     "type": "boolean"
                                                 },
                                                 "mode":
@@ -122,7 +123,6 @@
                                     },
                                     "required":
                                     [
-                                        "source",
                                         "destination"
                                     ]
                                 }

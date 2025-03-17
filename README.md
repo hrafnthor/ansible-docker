@@ -37,7 +37,7 @@ docker:
               variable: [string]        The variable holding the value to set the env variable to. Mutually exlusive with `value`.
               remove: [bool]            Indicates that this named variable should be removed.
         extras:
-          - source: [string]            [required] The source to copy
+          - source: [string]            The source to copy. This can either be a file or a directory. If not defined then no copying action will take place. However, management of a destination will so this is a way to create directory structures without having anything to copy into them.
             destination:
               path: [string]            [required] The destination relative to [composition.destination] to copy to. The path will be created if it doesn't exist and the owner and group of the extra if defined. Otherwise set to the composition owner and group if defined. Otherwise root.
               is_file: [bool]           Indicates if the given path ends in a file name.
