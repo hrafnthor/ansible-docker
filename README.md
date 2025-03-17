@@ -38,7 +38,11 @@ docker:
               remove: [bool]            Indicates that this named variable should be removed.
         extras:
           - source: [string]            [required] The source to copy
-            destination: [string]       [required] The destination relative to [composition.destination] to copy to
+            destination:
+              path: [string]            [required] The destination relative to [composition.destination] to copy to. The path will be created if it doesn't exist and the owner and group of the extra if defined. Otherwise set to the composition owner and group if defined. Otherwise root.
+              is_file: [bool]           Indicates if the given path ends in a file name.
+              mode: [string]            The mode to set the path. Defaults to 0755.
+              skip_path: [string]       The subpath of the path that should not have it's mode and ownership changed. Has to be a subpath of the given path.
             owner: [string]             The remote user to set as owner of the copied values. Defaults to `root`
             group: [string]             The remote group that owns the copied values. Defaults to `root`
             mode: [string]              The mode to set on the copied values. Defaults to `0755`

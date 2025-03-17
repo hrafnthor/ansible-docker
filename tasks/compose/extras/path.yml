@@ -1,0 +1,61 @@
+# -----------------------------------------------------------------------------
+#
+# This file contains tasks related to configuring paths for extra files.
+#
+# It expects to find a dict object called 'extra', a dict object called
+# 'compositions' and a string called 'project_dir'.
+#
+# -----------------------------------------------------------------------------
+
+- name: "docker | extras | ensure extra's path exists"
+  block:
+
+  - name: "docker | extras | fail if skip_path is not subpath of path"
+    ansible.builtin.fail:
+      msg: "destination path {{ extra.destination.path }} does not start with skip_path {{ extra.skip_path }}"
+    when:
+      - extra.destination.skip_path is defined 
+      - not extra.destination.path.startswith(extra.destination.skip_path)
+
+  - name: "docker | extras | set extra path to extract destination and mode path differences"
+    ansible.builtin.set_fact:
+        extra_path: "{{ extra.destination.path | regex_replace('^' + extra.destination.skip_path + '/*', '') }}"
+    when:
+      - extra.destination.skip_path is defined 
+
+  - name: "docker | extras | set extra path to destination path"
+    ansible.builtin.set_fact:
+        extra_path: "{{ extra.destination.path }}"
+    when:
+      - extra.destination.skip_path is undefined 
+
+  - name: "docker | extras | extract extra files path segments"
+    ansible.builtin.set_fact:
+      path_segments: >-
+        {{ extra_path | dirname | split('/') | reject('equalto', '') | list }}
+    when:
+      - extra.destination.is_file is defined
+      - extra.destination.is_file
+
+  - name: "docker | extras | extract extra directory path segments"
+    ansible.builtin.set_fact:
+      path_segments: >-
+        {{ extra_path | split('/') | reject('equalto', '') | list }}
+    when:
+      - extra.destination.is_file is undefined or not extra.destination.is_file
+
+  - name: "docker | extras | initialize 'extra_segment_path'"
+    ansible.builtin.set_fact:
+      extra_segment_path: "{{ project_dir }}"
+
+  - name: "docker | extras | ensure segment path"
+    ansible.builtin.include_tasks: segments.yml
+    loop: "{{ path_segments }}"
+    loop_control:
+      loop_var: segment
+
+  always:
+
+    - name: "docker | extras | clear extra's segment path"
+      ansible.builtin.set_fact:
+        extra_segment_path: null

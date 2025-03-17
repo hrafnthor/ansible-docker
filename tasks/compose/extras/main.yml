@@ -1,0 +1,26 @@
+# -----------------------------------------------------------------------------
+#
+# This file contains tasks related to configuring paths for extra files.
+#
+# It expects to find  a dict object called 'composition' and a string
+# called 'project_dir'.
+#
+# -----------------------------------------------------------------------------
+
+- name: "docker | extras | manage path"
+  ansible.builtin.include_tasks: path.yml
+  loop: "{{ composition.extras }}"
+  loop_control:
+    loop_var: extra
+
+- name: "docker | extras | copy extras"
+  ansible.builtin.copy:
+    src: "{{ item.source }}"
+    dest: "{{ project_dir }}/{{ item.destination.path }}"
+    owner: "{{ item.owner | default('root') }}"
+    group: "{{ item.group | default('root') }}"
+    mode: "{{ item.mode | default('0755') }}"
+    force: "{{ item.force | default(false) }}"
+  loop: "{{ composition.extras }}"
+  when:
+    - composition.extras is defined

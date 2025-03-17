@@ -1,0 +1,24 @@
+# -----------------------------------------------------------------------------
+#
+# This file contains tasks related to creating segments of a composition's 
+# extra's path, configuring access controls and ownership for the segment.
+#
+# It expects to be iterated over with new segments at a time.
+#
+# It expects to find a string called 'segment', a dict object 'extra' and a
+# dict object 'composition'.
+#
+# -----------------------------------------------------------------------------
+
+- name: "docker | extras | append segment to path"
+  ansible.builtin.set_fact:
+    extra_segment_path: "{{ extra_segment_path }}/{{ segment }}"
+
+- name: "docker | extras | ensure path exists"
+  ansible.builtin.file:
+    path: "{{ extra_segment_path }}"
+    state: directory
+    owner: "{{ extra.owner | default(composition.owner | default('root')) }}"
+    group: "{{ extra.group | default(composition.group | default('root')) }}"
+    mode: "{{ extra.destination.mode | default('0755') }}"
+    force: true
