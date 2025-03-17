@@ -9,20 +9,14 @@
 
 - name: "docker | extras | manage destinations"
   ansible.builtin.include_tasks: path.yml
-  loop: "{{ composition.extras }}"
-  loop_control:
-    loop_var: extra
 
-- name: "docker | extras | filter those defining a source"
-  set_fact:
-    extras_with_source: "{{ composition.extras | selectattr('age', 'defined') | list }}"
-
-- name: "docker | extras | copy extras"
+- name: "docker | extras | copy extra source"
   ansible.builtin.copy:
-    src: "{{ item.source }}"
-    dest: "{{ project_dir }}/{{ item.destination.path }}"
-    owner: "{{ item.owner | default('root') }}"
-    group: "{{ item.group | default('root') }}"
-    mode: "{{ item.mode | default('0755') }}"
-    force: "{{ item.force | default(false) }}"
-  loop: "{{ extras_with_source }}"
+    src: "{{ extra.source }}"
+    dest: "{{ project_dir }}/{{ extra.destination.path }}"
+    owner: "{{ extra.owner | default(composition.owner | default('root')) }}"
+    group: "{{ extra.group | default(composition.group | default('root')) }}"
+    mode: "{{ extra.mode | default('0755') }}"
+    force: "{{ extra.force | default(false) }}"
+  when:
+    - extra.source is defined
