@@ -18,7 +18,7 @@ docker:
       - name: [string]                  [Required]	Used as project directory name if `destination` is not found.
         source: [string]                [Required] The local path to the `Docker Compose` project.
         destination: [string]           The remote location where the project directory should be.
-        user: [string]                  The remote user who should own the project directory, else `root`.
+        owner: [string]                  The remote user who should own the project directory, else `root`.
         group: [string]                 The remote group who should own the project directory, else `root`.
         secrets:
           - name: [string]              [Required] The name of the file containing the secret at `<project-dir>/secrets/name`.

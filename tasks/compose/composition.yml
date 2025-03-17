@@ -12,7 +12,7 @@
 - name: docker | compose | manage composition directory
   ansible.builtin.file:
     path: "{{ project_dir }}"
-    owner: "{{ composition.user | default('root') }}"
+    owner: "{{ composition.owner | default('root') }}"
     group: "{{ composition.group | default('root') }}"
     mode: "{{ composition.mode | default('0755') }}"
     state: "{{ 'absent' if composition.remove is defined and composition.remove else 'directory' }}"
@@ -22,7 +22,7 @@
     src: "{{ composition.source }}"
     dest: "{{ project_dir }}"
     force: "{{ composition.force | default(false) }}"
-    owner: "{{ composition.user | default('root') }}"
+    owner: "{{ composition.owner | default('root') }}"
     group: "{{ composition.group | default('root') }}"
     mode: "{{ composition.mode | default('0644') }}"
   when:
