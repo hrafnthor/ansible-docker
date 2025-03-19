@@ -42,6 +42,9 @@
 
 - name: docker | compose | manage extras
   ansible.builtin.include_tasks: extras/main.yml
+  loop: "{{ composition.extras }}"
+  loop_control:
+    loop_var: extra
   when:
     - composition.remove is not defined or not composition.remove
     - composition.extras is defined
