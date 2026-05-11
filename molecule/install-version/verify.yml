@@ -1,0 +1,29 @@
+---
+- name: Verify
+  hosts: all
+  vars_files:
+    - "../../defaults/main.yml"
+  tasks:
+
+  - name: Lookup docker package version
+    command: docker --version
+    register: docker_version
+    changed_when: false
+    failed_when: false
+
+  - name: Ensure docker version was installed
+    fail:
+      msg: "Package '{{ hth_docker_package_name }}' was not installed!"
+    when:
+      - docker_version.rc != 0
+      - "'29.4.3' not in docker_version.stdout"
+
+  - name: Lookup for priority file
+    stat:
+      path: "{{ hth_docker_apt_priority_file_path }}"
+    register: docker_priority_file_stat
+
+  - name: Ensure priority file exists and is non zero
+    fail:
+      msg: "apt preference file for Docker was not found or was empty!"
+    when: not docker_priority_file_stat.stat.exists or docker_priority_file_stat.stat.size == 0

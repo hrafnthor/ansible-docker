@@ -1,0 +1,39 @@
+---
+- name: Verify
+  hosts: all
+  vars_files:
+    - "../../defaults/main.yml"
+  tasks:
+
+  - name: Lookup docker package version
+    command: docker --version
+    register: docker_version
+    changed_when: false
+    failed_when: false
+
+  - name: Ensure latest docker package was installed
+    fail:
+      msg: "Package '{{ hth_docker_package_name }}' was not installed!"
+    when: docker_version.rc != 0
+
+  - name: Lookup for signing key file
+    stat:
+      path: "{{ hth_docker_repository_signing_key_directory_path }}/{{ hth_docker_repository_signing_key_filename }}"
+    register: docker_signing_key_stat
+
+  - name: Ensure signing file exists and is non zero
+    fail:
+      msg: "Signing key was not found at path '{{ hth_docker_repository_signing_key_directory_path }}/{{ hth_docker_repository_signing_key_filename }}'!"
+    when: not docker_signing_key_stat.stat.exists or docker_signing_key_stat.stat.size == 0
+
+  - name: Lookup supplied signing key stats
+    delegate_to: localhost
+    ansible.builtin.stat:
+      path: "{{ playbook_dir }}/files/signing.asc"
+    register: supplied_docker_signing_key_stat
+
+  - name: Ensure signing file equals supplied file
+    fail:
+      msg: "Signing key differs from supplied key!"
+    when:
+      - docker_signing_key_stat.stat.checksum != supplied_docker_signing_key_stat.stat.checksum
