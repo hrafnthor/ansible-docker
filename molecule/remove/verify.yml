@@ -1,0 +1,48 @@
+---
+- name: Verify
+  hosts: all
+  vars_files:
+    - "../../defaults/main.yml"
+  tasks:
+
+  - name: Ensure docker package was removed
+    ansible.builtin.package_facts:
+      manager: apt
+
+  - name: Fail if docker-ce is still installed
+    ansible.builtin.fail:
+      msg: "'docker-ce' is still installed"
+    when: "'docker-ce' in ansible_facts.packages"
+
+  - name: Lookup repository signing key
+    stat:
+      path: "{{ hth_docker_repository_signing_key_directory_path }}/{{ hth_docker_repository_signing_key_filename }}"
+    register: docker_repo_signing_key_stat
+
+  - name: Ensure repository signing key was removed
+    fail:
+      msg: "Repository signing key for repository was still found!"
+    when: docker_repo_signing_key_stat.stat.exists
+
+  - name: Lookup priority file
+    stat:
+      path: "{{ hth_docker_apt_priority_file_path }}"
+    register: docker_repo_priority_file_stat
+
+  - name: Ensure priority file was removed
+    fail:
+      msg: "Package priority file for repository was still found!"
+    when: docker_repo_priority_file_stat.stat.exists
+
+  - name: Check if apt repository is still configured
+    ansible.builtin.command:
+      cmd: grep -r "download.docker.com" /etc/apt/sources.list /etc/apt/sources.list.d/
+    register: docker_apt_repo
+    changed_when: false
+    failed_when: false
+
+  - name: Ensure apt repository was removed
+    fail:
+      msg: "Docker apt repository is still present!"
+    when:
+      - docker_apt_repo.rc == 0

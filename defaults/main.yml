@@ -1,0 +1,15 @@
+
+# Default path to where the signing key will be placed
+hth_docker_repository_signing_key_directory_path: "/etc/apt/keyrings"
+
+# Default file name given to the docker repository signing key
+hth_docker_repository_signing_key_filename: "packages.docker.com.asc"
+
+# Default package name to install
+hth_docker_package_name: "docker-ce"
+
+# Default compose package name to install
+hth_docker_compose_package_name: "docker-compose-plugin"
+
+# Default absolute path to the repository package priority file
+hth_docker_apt_priority_file_path: "/etc/apt/preferences.d/docker"

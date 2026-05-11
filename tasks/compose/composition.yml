@@ -5,11 +5,11 @@
 #
 # -----------------------------------------------------------------------------
 
-- name: docker | compose | composition path
+- name: "HTH | Docker | Compose | Set composition path"
   ansible.builtin.set_fact:
     project_dir: "{{ composition.destination if composition.destination is defined else '/srv/' + composition.name }}"
 
-- name: docker | compose | manage composition directory
+- name: "HTH | Docker | Compose | Manage composition directory"
   ansible.builtin.file:
     path: "{{ project_dir }}"
     owner: "{{ composition.owner | default('root') }}"
@@ -17,7 +17,7 @@
     mode: "{{ composition.mode | default('0755') }}"
     state: "{{ 'absent' if composition.remove is defined and composition.remove else 'directory' }}"
 
-- name: docker | compose | copy compose file
+- name: "HTH | Docker | Compose | Copy compose file"
   ansible.builtin.copy:
     src: "{{ composition.source }}"
     dest: "{{ project_dir }}"
@@ -28,19 +28,19 @@
   when:
     - composition.remove is not defined or not composition.remove
 
-- name: docker | compose | manage secrets
+- name: "HTH | Docker | Compose | Manage secrets"
   ansible.builtin.include_tasks: secrets/main.yml
   when:
     - composition.remove is not defined or not composition.remove
     - composition.secrets is defined
 
-- name: docker | compose | manage environment
+- name: "HTH | Docker | Compose | Manage environment"
   ansible.builtin.include_tasks: environment/main.yml
   when:
     - composition.remove is not defined or not composition.remove
     - composition.environments is defined
 
-- name: docker | compose | manage extras
+- name: "HTH | Docker | Compose | Manage extras"
   ansible.builtin.include_tasks: extras/main.yml
   loop: "{{ composition.extras }}"
   loop_control:

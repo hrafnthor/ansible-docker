@@ -1,0 +1,12 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+  - role: hth.docker
+    vars:
+      docker:
+        version: latest
+        signing:
+          key: signing.asc

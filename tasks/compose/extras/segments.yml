@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------
 #
-# This file contains tasks related to creating segments of a composition's 
+# This file contains tasks related to creating segments of a composition's
 # extra's path, configuring access controls and ownership for the segment.
 #
 # It expects to be iterated over with new segments at a time.
@@ -10,11 +10,11 @@
 #
 # -----------------------------------------------------------------------------
 
-- name: "docker | extras | append segment to path"
+- name: "HTH | Docker | Extras | Append segment to path"
   ansible.builtin.set_fact:
     extra_segment_path: "{{ extra_segment_path }}/{{ segment }}"
 
-- name: "docker | extras | ensure path exists"
+- name: "HTH | Docker | Extras | Ensure path exists"
   ansible.builtin.file:
     path: "{{ extra_segment_path }}"
     state: directory

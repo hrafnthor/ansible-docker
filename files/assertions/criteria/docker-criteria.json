@@ -4,12 +4,33 @@
     "type": "object",
     "properties":
     {
+        "signing":
+        {
+            "type": "object",
+            "properties":
+            {
+                "key":
+                {
+                    "description": "The path to the signing key to use when adding the package repository.",
+                    "$ref": "#/definitions/non-empty-string"
+                }
+            },
+            "required":
+            [
+                "key"
+            ]
+        },
         "version":
         {
             "$ref": "#/definitions/non-empty-string"
         },
         "remove":
         {
+            "type": "boolean"
+        },
+        "priority":
+        {
+            "description": "Indicates if a package priority file should be added for the package repository.",
             "type": "boolean"
         },
         "compose":

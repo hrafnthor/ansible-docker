@@ -1,7 +1,47 @@
 # Ansible-Docker
 An Ansible role for installing and configuring Docker projects on a system.
 
----
+
+### Requirements
+
+This role requires two separate tools be installed.
+
+First it requires the ansible.utils collection be installed from Ansible-Galaxy via:
+
+```shell
+ansible-galaxy collection install ansible.utils
+```
+
+Secondly it requires the jsonschema Python package be installed via:
+
+```shell
+pip install jsonschema
+```
+
+Thirdly, if using this role on a Debian system, it requires that the `python3-debian` package be installed as well.
+
+### Setup
+
+Before the role can be used it needs to be added to the machine running the playbook, and as of writing this, this role is not hosted on Ansible-Galaxy only on Github.
+
+1. Create a requirements.yml file in the root directory of the playbook being worked on.
+
+2. Add the following definition inside the requirements.yml file:
+
+```yaml
+- name: hth-docker
+  src: https://github.com/hrafnthor/ansible-docker.git
+  scm: git
+```
+
+3. Install the requirements by executing
+
+```shell
+ansible-galaxy install -r .requirements.yml
+```
+
+This will allow any playbook run from this machine to use the role hth-docker
+
 
 ## Values
 
@@ -11,6 +51,9 @@ All values are optional unless otherwise marked as required
 docker:
   version: [string]                     Indicates the version to install. If empty, latest will be used. Can be set to 'latest' for the latest version.
   remove: [bool]                        Indicates if `Docker` should be remove from the system. Default false.
+  signing:
+    key:    [string]                    The path to the signing key that should be used for the Docker repository. If missing, then the repositories own remote key will be used for signing.
+  priority: [bool]                      Indicates if docker related packages should be prioritized from this repository and others blocked. Defaults to false.
   compose:
     version: [string]                   [Required] Indicates the version of `Docker Compose` to install. Can be set to 'latest' for the latest version.
     remove: [bool]
@@ -18,7 +61,7 @@ docker:
       - name: [string]                  [Required]	Used as project directory name if `destination` is not found.
         source: [string]                [Required] The local path to the `Docker Compose` project.
         destination: [string]           The remote location where the project directory should be.
-        owner: [string]                  The remote user who should own the project directory, else `root`.
+        owner: [string]                 The remote user who should own the project directory, else `root`.
         group: [string]                 The remote group who should own the project directory, else `root`.
         secrets:
           - name: [string]              [Required] The name of the file containing the secret at `<project-dir>/secrets/name`.
@@ -27,7 +70,7 @@ docker:
             remove: [bool]              Indicates that this named secret should be removed.
         environments:
           - mode: [string]              The access mode that the environment file will be given. Defaults to '0644'
-            owner: [string]              The user that should own the .env file. If not set defaults to the composition user. If they are not set, defaults to root.
+            owner: [string]             The user that should own the .env file. If not set defaults to the composition user. If they are not set, defaults to root.
             group: [string]             The group that should own the .env file. If not set defaults to the composition group. If they are not set, defaults to root.
             path: [string]              [required] The path relative to the source directory where the .env file should be created.
             remove: [bool]              Indicates if the environment file at the given path should be removed. If true, no file will be created. Defaults to false.
