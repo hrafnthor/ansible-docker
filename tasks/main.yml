@@ -5,11 +5,16 @@
     engine: ansible.utils.jsonschema
   run_once: yes
   delegate_to: localhost
+  when:
+    - docker is defined
 
 - name: "HTH | Docker | Install"
   ansible.builtin.include_tasks: install/main.yml
+  when:
+    - docker is defined
 
 - name: "HTH | Docker | Compose | Configure"
   ansible.builtin.include_tasks: compose/main.yml
   when:
+    - docker is defined
     - docker.compose is defined

@@ -11,9 +11,9 @@
   ansible.builtin.deb822_repository:
     name: docker
     types: [deb]
-    uris: ["https://download.docker.com/linux/{{ ansible_distribution | lower }}"]
-    signed_by: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
-    suites: ["{{ ansible_distribution_release }}"]
+    uris: ["https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}"]
+    signed_by: "{{ hth_docker_signing_key_path | default('https://download.docker.com/linux/' + ansible_facts['distribution'] | lower + '/gpg') }}"
+    suites: ["{{ ansible_facts['distribution_release'] }}"]
     components: [stable]
     state: "{{ 'absent' if docker.remove is defined and docker.remove else 'present' }}"
     enabled: true

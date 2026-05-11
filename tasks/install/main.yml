@@ -7,4 +7,4 @@
 - name: "HTH | Docker | Install | Install Docker for Debian systems"
   ansible.builtin.include_tasks: debian.yml
   when:
-    - ansible_distribution in ["Ubuntu", "Debian"]
+    - ansible_facts['distribution'] in ["Ubuntu", "Debian"]
