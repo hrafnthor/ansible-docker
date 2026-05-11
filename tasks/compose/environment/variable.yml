@@ -5,7 +5,7 @@
 #
 # -----------------------------------------------------------------------------
 
-- name: "docker | env | set environment variable from value"
+- name: "HTH | Docker | Environment | Set environment variable from value"
   ansible.builtin.lineinfile:
     path: "/{{ environment_file }}"
     regexp: "^{{ entry.name }}="
@@ -14,7 +14,7 @@
     - entry.remove is not defined or not entry.remove
     - entry.value is defined
 
-- name: "docker | env | set environment variable from variable"
+- name: "HTH | Docker | Environment | Set environment variable from variable"
   ansible.builtin.lineinfile:
     path: "/{{ environment_file }}"
     regexp: "^{{ entry.name }}="
@@ -23,7 +23,7 @@
     - entry.remove is not defined or not entry.remove
     - entry.variable is defined
 
-- name: "docker | env | remove environment variable"
+- name: "HTH | Docker | Environment | Remove environment variable"
   ansible.builtin.lineinfile:
      path: "/{{ environment_file }}"
      regexp: "^{{ entry.name }}="

@@ -1,15 +1,15 @@
 # -----------------------------------------------------------------------------
 #
-# This file contains tasks related to managing env variables under 
+# This file contains tasks related to managing env variables under
 # a specific path.
 #
 # -----------------------------------------------------------------------------
 
-- name: "docker | environment | set directory path"
+- name: "HTH | Docker | Environment | Set directory path"
   ansible.builtin.set_fact:
     environment_path: "{{ project_dir }}/{{ env.path }}"
 
-- name: "docker | environment | create directory"
+- name: "HTH | Docker | Environment | Create directory"
   ansible.builtin.file:
     path: "{{ environment_path }}"
     owner: "{{ env.owner | default(composition.user | default('root')) }}"
@@ -21,11 +21,11 @@
   when:
     - env.remove is not defined or not env.remove
 
-- name: "docker | environment | set file path"
+- name: "HTH | Docker | Environment | Set file path"
   ansible.builtin.set_fact:
     environment_file: "{{ environment_path }}/.env"
 
-- name: "docker | environment | create file"
+- name: "HTH | Docker | Environment | Create file"
   ansible.builtin.file:
     path: "{{ environment_file }}"
     state: "touch"
@@ -37,7 +37,7 @@
   when:
     - env.remove is not defined or not env.remove
 
-- name: "docker | environment | manage entries"
+- name: "HTH | Docker | Environment | Manage entries"
   ansible.builtin.include_tasks: variable.yml
   loop: "{{ env.entries }}"
   loop_control:
@@ -45,7 +45,7 @@
   when:
     - env.remove is not defined or not env.remove
 
-- name: "docker | environment | remove file"
+- name: "HTH | Docker | Environment | Remove file"
   ansible.builtin.file:
     path: "{{ environment_file }}"
     state: "absent"

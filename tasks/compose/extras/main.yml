@@ -7,10 +7,10 @@
 #
 # -----------------------------------------------------------------------------
 
-- name: "docker | extras | manage destinations"
+- name: "HTH | Docker | Extras | Manage destinations"
   ansible.builtin.include_tasks: path.yml
 
-- name: "docker | extras | copy extra source"
+- name: "HTH | Docker | Extras | Copy extra source"
   ansible.builtin.copy:
     src: "{{ extra.source }}"
     dest: "{{ project_dir }}/{{ extra.destination.path }}"

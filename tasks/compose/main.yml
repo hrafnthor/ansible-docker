@@ -5,7 +5,7 @@
 #
 # -----------------------------------------------------------------------------
 
-- name: docker | compose | configure composition
+- name: "HTH | Docker | Compose | Configure composition"
   ansible.builtin.include_tasks: composition.yml
   loop: "{{ docker.compose.compositions }}"
   loop_control:

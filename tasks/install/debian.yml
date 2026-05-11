@@ -5,7 +5,9 @@
 #
 # -----------------------------------------------------------------------------
 
-- name: "Docker | Debian | Add official repository"
+- name: "HTH | Docker | Debian | Set signing key path"
+
+- name: "HTH | Docker | Debian | Add official repository"
   ansible.builtin.deb822_repository:
     name: docker
     types: [deb]
@@ -17,13 +19,15 @@
     enabled: true
   register: docker_repo_state
 
-- name: "Docker | Debian | Update apt"
+- name: "HTH | Docker | Debian | Prioritize repository"
+
+- name: "HTH | Docker | Debian | Update apt"
   ansible.builtin.apt:
     update_cache: yes
   when:
     - docker_repo_state.changed
 
-- name: "Docker | Debian | Manage 'docker-ce' package"
+- name: "HTH | Docker | Debian | Manage Docker package"
   ansible.builtin.apt:
     name: "{{ 'docker-ce=' + docker.version if docker.version is defined and docker.version != 'latest' else 'docker-ce' }}"
     state: >-
@@ -31,7 +35,7 @@
           else 'present' if docker.version is defined and docker.version != 'latest'
           else 'latest' }}
 
-- name: "Docker | Debian | Manage 'docker-compose-plugin' package"
+- name: "HTH | Docker | Debian | Manage Docker Compose package"
   ansible.builtin.apt:
     name: "{{ 'docker-compose-plugin=' + docker.compose.version if docker.compose.version is defined and docker.compose.version != 'latest' else 'docker-compose-plugin'}}"
     state: >-
