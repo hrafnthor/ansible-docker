@@ -6,6 +6,21 @@
 # -----------------------------------------------------------------------------
 
 - name: "HTH | Docker | Debian | Set signing key path"
+  ansible.builtin.set_fact:
+    hth_docker_signing_key_path: "{{ hth_docker_repository_signing_key_directory_path }}/{{ hth_docker_repository_signing_key_filename }}"
+  when:
+    - docker.signing is defined
+
+- name: "HTH | Docker | Debian | Copy signing key"
+  ansible.builtin.copy:
+    src: "{{ docker.signing.key }}"
+    dest: "{{ hth_docker_signing_key_path }}"
+    owner: "root"
+    group: "root"
+    mode: 0644
+  when:
+    - docker.signing is defined
+    - docker.remove is undefined or not docker.remove
 
 - name: "HTH | Docker | Debian | Add official repository"
   ansible.builtin.deb822_repository:
@@ -29,7 +44,7 @@
 
 - name: "HTH | Docker | Debian | Manage Docker package"
   ansible.builtin.apt:
-    name: "{{ 'docker-ce=' + docker.version if docker.version is defined and docker.version != 'latest' else 'docker-ce' }}"
+    name: "{{ hth_docker_package_name + '=' + docker.version if docker.version is defined and docker.version != 'latest' else hth_docker_package_name }}"
     state: >-
       {{ 'absent' if docker.remove is defined and docker.remove
           else 'present' if docker.version is defined and docker.version != 'latest'
@@ -37,10 +52,19 @@
 
 - name: "HTH | Docker | Debian | Manage Docker Compose package"
   ansible.builtin.apt:
-    name: "{{ 'docker-compose-plugin=' + docker.compose.version if docker.compose.version is defined and docker.compose.version != 'latest' else 'docker-compose-plugin'}}"
+    name: "{{ hth_docker_compose_package_name + '=' + docker.compose.version if docker.compose.version is defined and docker.compose.version != 'latest' else hth_docker_compose_package_name }}"
     state: >-
       {{ 'absent' if docker.compose.remove is defined and docker.remove
           else 'present' if docker.compose.version is defined and docker.compose.version != 'latest'
           else 'latest' }}
   when:
     - docker.compose is defined
+
+- name: "HTH | Docker | Debian | Remove signing key"
+  ansible.builtin.file:
+    path: "{{ hth_docker_signing_key_path }}"
+    state: absent
+  when:
+    - hth_docker_signing_key_path is defined
+    - docker.remove is defined
+    - docker.remove
