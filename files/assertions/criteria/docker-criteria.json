@@ -28,6 +28,11 @@
         {
             "type": "boolean"
         },
+        "priority":
+        {
+            "description": "Indicates if a package priority file should be added for the package repository.",
+            "type": "boolean"
+        },
         "compose":
         {
             "type": "object",

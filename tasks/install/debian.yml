@@ -35,6 +35,16 @@
   register: docker_repo_state
 
 - name: "HTH | Docker | Debian | Prioritize repository"
+  ansible.builtin.copy:
+    src: priority
+    dest: "{{ hth_docker_apt_priority_file_path }}"
+    owner: root
+    group: root
+    mode: 0644
+  when:
+    - docker.remove is undefined or not docker.remove
+    - docker.priority is defined
+    - docker.priority
 
 - name: "HTH | Docker | Debian | Update apt"
   ansible.builtin.apt:
@@ -66,5 +76,13 @@
     state: absent
   when:
     - hth_docker_signing_key_path is defined
+    - docker.remove is defined
+    - docker.remove
+
+- name: "HTH | Docker | Debian | Remove repository prioritization"
+  ansible.builtin.file:
+    path: "{{ hth_docker_apt_priority_file_path }}"
+    state: absent
+  when:
     - docker.remove is defined
     - docker.remove
