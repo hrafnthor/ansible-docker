@@ -5,19 +5,6 @@
     - "../../defaults/main.yml"
   tasks:
 
-  - name: Lookup docker package version
-    command: docker --version
-    register: docker_version
-    changed_when: false
-    failed_when: false
-
-  - name: Ensure docker version was installed
-    fail:
-      msg: "Package '{{ hth_docker_package_name }}' was not installed!"
-    when:
-      - docker_version.rc != 0
-      - "'29.4.3' not in docker_version.stdout"
-
   - name: Lookup for priority file
     stat:
       path: "{{ hth_docker_apt_priority_file_path }}"
@@ -27,3 +14,39 @@
     fail:
       msg: "apt preference file for Docker was not found or was empty!"
     when: not docker_priority_file_stat.stat.exists or docker_priority_file_stat.stat.size == 0
+
+  - name: Lookup docker package version
+    command: docker --version
+    register: docker_version
+    changed_when: false
+    failed_when: false
+
+  - name: Ensure docker was installed
+    fail:
+      msg: "Package '{{ hth_docker_package_name }}' was not installed!"
+    when:
+      - docker_version.rc != 0
+
+  - name: Ensure correct docker version was installed
+    fail:
+      msg: "Incorrect version of package '{{ hth_docker_package_name }}' was installed!"
+    when:
+      - "'29.5.3' not in docker_version.stdout"
+
+  - name: Lookup docker compose package version
+    command: docker compose version --short
+    register: docker_compose_version
+    changed_when: false
+    failed_when: false
+
+  - name: Ensure docker compose was installed
+    fail:
+      msg: "Package '{{ hth_docker_compose_package_name }}' was not installed!"
+    when:
+      - docker_compose_version.rc != 0
+
+  - name: Ensure correct docker compose version was installed
+    fail:
+      msg: "Incorrect version of package '{{ hth_docker_compose_package_name }}' was installed!"
+    when:
+      - "'5.1.4' not in docker_compose_version.stdout"
