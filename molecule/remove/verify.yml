@@ -11,8 +11,13 @@
 
   - name: Fail if docker-ce is still installed
     ansible.builtin.fail:
-      msg: "'docker-ce' is still installed"
-    when: "'docker-ce' in ansible_facts.packages"
+      msg: "'{{ hth_docker_package_name }}' is still installed"
+    when: hth_docker_package_name in ansible_facts.packages
+
+  - name: Fail if docker-compose is still installed
+    ansible.builtin.fail:
+      msg: "'{{ hth_docker_compose_package_name }}' is still installed"
+    when: hth_docker_compose_package_name  in ansible_facts.packages
 
   - name: Lookup repository signing key
     stat:
