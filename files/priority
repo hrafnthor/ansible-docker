@@ -19,7 +19,7 @@ Pin: origin download.docker.com
 Pin-Priority: 1000
 
 Package: docker-compose-plugin
-Pin origin download.docker.com
+Pin: origin download.docker.com
 Pin-Priority: 1000
 
 # Block all other packages

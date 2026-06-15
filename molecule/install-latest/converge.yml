@@ -9,3 +9,5 @@
       docker:
         version: latest
         priority: true
+        compose:
+          version: latest

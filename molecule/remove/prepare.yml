@@ -19,3 +19,5 @@
     vars:
       docker:
         version: latest
+        compose:
+          version: latest

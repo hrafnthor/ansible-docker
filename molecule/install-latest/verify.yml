@@ -5,6 +5,16 @@
     - "../../defaults/main.yml"
   tasks:
 
+  - name: Lookup for priority file
+    stat:
+      path: "{{ hth_docker_apt_priority_file_path }}"
+    register: docker_priority_file_stat
+
+  - name: Ensure priority file exists and is non zero
+    fail:
+      msg: "apt preference file for Docker was not found or was empty!"
+    when: not docker_priority_file_stat.stat.exists or docker_priority_file_stat.stat.size == 0
+
   - name: Lookup docker package version
     command: docker --version
     register: docker_version
@@ -17,12 +27,14 @@
     when:
       - docker_version.rc != 0
 
-  - name: Lookup for priority file
-    stat:
-      path: "{{ hth_docker_apt_priority_file_path }}"
-    register: docker_priority_file_stat
+  - name: Lookup docker compose package version
+    command: docker compose version --short
+    register: docker_compose_version
+    changed_when: false
+    failed_when: false
 
-  - name: Ensure priority file exists and is non zero
+  - name: Ensure docker compose version was installed
     fail:
-      msg: "apt preference file for Docker was not found or was empty!"
-    when: not docker_priority_file_stat.stat.exists or docker_priority_file_stat.stat.size == 0
+      msg: "Package '{{ hth_docker_compose_package_name }}' was not installed!"
+    when:
+      - docker_compose_version.rc != 0

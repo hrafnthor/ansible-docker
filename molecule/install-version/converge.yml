@@ -7,5 +7,7 @@
   - role: hth.docker
     vars:
       docker:
-        version: "5:29.4.3-1~ubuntu.24.04~noble"
+        version: "5:29.5.3-1~ubuntu.24.04~noble"
         priority: true
+        compose:
+          version: "5.1.4-1~ubuntu.24.04~noble"

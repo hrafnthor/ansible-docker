@@ -64,11 +64,11 @@
   ansible.builtin.apt:
     name: "{{ hth_docker_compose_package_name + '=' + docker.compose.version if docker.compose.version is defined and docker.compose.version != 'latest' else hth_docker_compose_package_name }}"
     state: >-
-      {{ 'absent' if docker.compose.remove is defined and docker.remove
+      {{ 'absent' if (docker.compose.remove is defined and docker.remove.compose.remove) or (docker.remove is defined and docker.remove)
           else 'present' if docker.compose.version is defined and docker.compose.version != 'latest'
           else 'latest' }}
   when:
-    - docker.compose is defined
+    - docker.compose is defined or (docker.remove is defined and docker.remove)
 
 - name: "HTH | Docker | Debian | Remove signing key"
   ansible.builtin.file:
