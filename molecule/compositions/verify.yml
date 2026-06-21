@@ -1,0 +1,131 @@
+---
+- name: Verify
+  hosts: all
+  vars_files:
+    - "../../defaults/main.yml"
+  tasks:
+
+  - name: Lookup compositions file
+    stat:
+      path: "/srv/testing-composition"
+    register: docker_compose_file
+
+  - name: Ensure composition file was copied
+    fail:
+      msg: "Did not find composition file at '/srv/testing-composition/docker-compose.yml'"
+    when: not docker_compose_file.stat.exists
+
+  - name: Ensure composition file was non empty
+    fail:
+      msg: "Composition file at '/srv/testing-composition/docker-compose.yml' was empty"
+    when: docker_compose_file.stat.size == 0
+
+  - name: Lookup secret directory
+    stat:
+      path: "/srv/testing-composition/secrets"
+    register: docker_compose_secrets_dir
+
+  - name: Fail if secrets directory doesn't exist
+    fail:
+      msg: "Secrets directory was not found at '/srv/testing-composition/secrets'!"
+    when: not docker_compose_secrets_dir.stat.exists
+
+  - name: Fail if secrets directory is not owned by root
+    fail:
+      msg: "Secrets directory was not owned by user 'root'!"
+    when: docker_compose_secrets_dir.stat.uid != 0 or docker_compose_secrets_dir.stat.gid != 0
+
+  - name: Fail on incorrect access mode for secrets directory
+    fail:
+      msg: "Secrets directory does not have access mode '0700'!"
+    when: docker_compose_secrets_dir.stat.mode != '0700'
+
+  - name: Lookup value secret file
+    stat:
+      path: "/srv/testing-composition/secrets/secret-value"
+    register: docker_compose_value_secret_file
+
+  - name: Fail if value secret file does not exist
+    fail:
+      msg: "Value based secret file 'secret-value' was not found!"
+    when: not docker_compose_value_secret_file.stat.exists
+
+  - name: Fail if value secret file is not owned by user 'root'
+    fail:
+      msg: "Value based secret file 'secret-value' was not owned by 'root'"
+    when: docker_compose_value_secret_file.stat.uid != 0 or docker_compose_value_secret_file.stat.gid != 0
+
+  - name: Fail on incorrect access mode for value secret file
+    fail:
+      msg: "Value based secret file 'secret-value' did not have correct access mode"
+    when: docker_compose_value_secret_file.stat.mode != '0400'
+
+  - name: Read value secret file contents
+    ansible.builtin.slurp:
+      src: "{{ docker_compose_value_secret_file.stat.path }}"
+    register: docker_compose_value_secret_file_contents
+
+  - name: Fail when value secret file contents mismatches expected values
+    fail:
+      msg: "Value based secret file 'secret-value' did not contain the expected value!"
+    when: (docker_compose_value_secret_file_contents.content | b64decode) == "very secret value"
+
+  - name: Lookup variable secret file
+    stat:
+      path: "/srv/testing-composition/secrets/secret-variable"
+    register: docker_compose_variable_secret_file
+
+  - name: Fail if variable secret file does not exist
+    fail:
+      msg: "Variable based secret file 'secret-variable' was not found!"
+    when: not docker_compose_variable_secret_file.stat.exists
+
+  - name: Fail if variable secret file is not owned by user 'root'
+    fail:
+      msg: "Variable based secret file 'secret-variable' was not owned by 'root'"
+    when: docker_compose_variable_secret_file.stat.uid != 0 or docker_compose_value_secret_file.stat.gid != 0
+
+  - name: Fail on incorrect access mode for variable secret file
+    fail:
+      msg: "Variable based secret file 'secret-variable' did not have correct access mode"
+    when: docker_compose_variable_secret_file.stat.mode != '0400'
+
+  - name: Read variable secret file contents
+    ansible.builtin.slurp:
+      src: "{{ docker_compose_variable_secret_file.stat.path }}"
+    register: docker_compose_variable_secret_file_contents
+
+  - name: Fail when variable secret file contents mismatches expected values
+    fail:
+      msg: "Variable based secret file 'secret-variable' did not contain the expected value!"
+    when: (docker_compose_variable_secret_file_contents.content | b64decode) == "super secret variable"
+
+  - name: Lookup user owned secret file
+    stat:
+      path: "/srv/testing-composition/secrets/secret-user-owned"
+    register: docker_compose_user_owned_secret_file
+
+  - name: Fail if user owned secret file does not exist
+    fail:
+      msg: "User owned secret file 'secret-user-owned' was not found!"
+    when: not docker_compose_user_owned_secret_file.stat.exists
+
+  - name: Fail if user owned secret file is not owned by user 'bob'
+    fail:
+      msg: "User owned secret file 'secret-user-owned' was not owned by 'bob'"
+    when: docker_compose_user_owned_secret_file.stat.uid != 2000
+
+  - name: Fail on incorrect access mode for user owned secret file
+    fail:
+      msg: "User owned secret file 'secret-user-owned' did not have correct access mode"
+    when: docker_compose_user_owned_secret_file.stat.mode != '0400'
+
+  - name: Lookup removed secret file
+    stat:
+      path: "/srv/testing-secret-removal/secrets/secret-to-remove"
+    register: docker_compose_removed_secret_file
+
+  - name: Fail if removed secret file is found
+    fail:
+      msg: "Secret that should have been removed was found at '/srv/testing-secret-removal/secrets/secret-to-remove'!"
+    when: docker_compose_removed_secret_file.stat.exists
