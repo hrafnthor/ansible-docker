@@ -42,3 +42,6 @@ jobs:
 
     - name: Test removal
       run: molecule test --scenario-name remove
+
+    - name: Test compositions
+      run: molecule test --scenario-name compositions
