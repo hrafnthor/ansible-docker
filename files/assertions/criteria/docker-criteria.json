@@ -252,6 +252,16 @@
                                         {
                                             "$ref": "#/definitions/non-empty-string"
                                         },
+                                        "owner":
+                                        {
+                                            "description": "The owner of the secret file. If omitted will be configured composition user or 'root' if none.",
+                                            "$ref": "#/definitions/non-empty-string"
+                                        },
+                                        "group":
+                                        {
+                                            "description": "The group owner of the secret file. If omitted will be configured composition group or 'root' if none.",
+                                            "$ref": "#/definitions/non-empty-string"
+                                        },
                                         "remove":
                                         {
                                             "type": "boolean"

@@ -1,0 +1,32 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+  - role: hth.docker
+    vars:
+      secret_variable: "super secret variable"
+      docker:
+        version: latest
+        compose:
+          version: latest
+          compositions:
+            - name: "testing-composition"
+              source: "docker-compose.yml"
+              destination: "/srv/testing-composition"
+              secrets:
+                - name: "secret-value"
+                  value: "very secret value"
+                - name: "secret-variable"
+                  variable: "secret_variable"
+                - name: "secret-user-owned"
+                  owner: "bob"
+                  group: "bob"
+                  value: "bob should own this"
+            - name: "testing-secret-removal"
+              source: "docker-compose.yml"
+              destination: "/srv/testing-secret-removal"
+              secrets:
+                - name: "secret-to-remove"
+                  remove: true

@@ -29,3 +29,7 @@ test-removal *EXTRA:
 # Test only the installation of locally supplied signing keys
 test-repository-local-signing *EXTRA:
   @just test --scenario-name repository-local-signing {{EXTRA}}
+
+# Tests only the composition management scenario
+test-compositions *EXTRA:
+  @just test --scenario-name compositions {{EXTRA}}

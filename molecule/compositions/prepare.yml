@@ -1,0 +1,39 @@
+- name: Prepare for role testing
+  hosts: all
+  become: true
+  gather_facts: true
+  pre_tasks:
+    - name: Update apt cache
+      tags: system,utilities
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: install python3-debian (needed for the 'deb822_repository' task)
+      apt:
+        name: python3-debian
+        state: latest
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Create test user
+      ansible.builtin.user:
+        name: bob
+        uid: 2000
+        state: present
+        create_home: yes
+        shell: /bin/bash
+        groups: []
+        append: no
+  roles:
+  - role: hth.docker
+    vars:
+      docker:
+        version: latest
+        compose:
+          version: latest
+          compositions:
+            - name: "preparing-for-secret-removal"
+              source: "docker-compose.yml"
+              destination: "/srv/testing-secret-removal"
+              secrets:
+                - name: "secret-to-remove"
+                  value: "This should be removed during test"
