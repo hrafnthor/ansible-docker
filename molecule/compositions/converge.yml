@@ -7,6 +7,7 @@
   - role: hth.docker
     vars:
       secret_variable: "super secret variable"
+      env_variable: "some environment variable value"
       docker:
         version: latest
         compose:
@@ -24,9 +25,52 @@
                   owner: "bob"
                   group: "bob"
                   value: "bob should own this"
-            - name: "testing-secret-removal"
+              environments:
+                - entries:
+                  - name: "env-value"
+                    value: "some value"
+                  - name: "env-variable"
+                    variable: "env_variable"
+                - path: "path-testing"
+                  entries:
+                    - name: "value"
+                      value: "some value"
+            - name: "testing-env-ownership"
+              owner: "alice"
+              group: "alice"
               source: "docker-compose.yml"
-              destination: "/srv/testing-secret-removal"
+              destination: "/srv/testing-env-ownership"
+              environments:
+                - entries:
+                  - name: "value"
+                    value: "alice should own this"
+                - path: "bob-owned"
+                  owner: "bob"
+                  group: "bob"
+                  mode: "0600"
+                  entries:
+                    - name: "value"
+                      value: "bob should own this"
+                - path: "bob-owner-only"
+                  owner: "bob"
+                  entries:
+                    - name: "value"
+                      value: "group should be bob"
+                - path: "bob-and-alice"
+                  group: "bob"
+                  entries:
+                    - name: "value"
+                      value: "alice should be owner but the group is bob"
+            - name: "testing-removal"
+              source: "docker-compose.yml"
+              destination: "/srv/testing-removal"
               secrets:
                 - name: "secret-to-remove"
+                  remove: true
+              environments:
+                - path: "testing-field-removal"
+                  entries:
+                  - name: "value"
+                    remove: true
+                - path: "testing-file-removal"
                   remove: true

@@ -23,6 +23,16 @@
         shell: /bin/bash
         groups: []
         append: no
+
+    - name: Create test user
+      ansible.builtin.user:
+        name: alice
+        uid: 3000
+        state: present
+        create_home: yes
+        shell: /bin/bash
+        groups: []
+        append: no
   roles:
   - role: hth.docker
     vars:
@@ -33,7 +43,16 @@
           compositions:
             - name: "preparing-for-secret-removal"
               source: "docker-compose.yml"
-              destination: "/srv/testing-secret-removal"
+              destination: "/srv/testing-removal"
               secrets:
                 - name: "secret-to-remove"
-                  value: "This should be removed during test"
+                  value: "This should be removed after scenario run"
+              environments:
+                - path: "testing-field-removal"
+                  entries:
+                    - name: "value"
+                      value: "This should be removed after scenario run"
+                - path: "testing-file-removal"
+                  entries:
+                    - name: "value"
+                      value: "this whole file should be removed"

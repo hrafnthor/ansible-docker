@@ -61,7 +61,7 @@
     when: docker_compose_value_secret_file.stat.mode != '0400'
 
   - name: Read value secret file contents
-    ansible.builtin.slurp:
+    slurp:
       src: "{{ docker_compose_value_secret_file.stat.path }}"
     register: docker_compose_value_secret_file_contents
 
@@ -91,7 +91,7 @@
     when: docker_compose_variable_secret_file.stat.mode != '0400'
 
   - name: Read variable secret file contents
-    ansible.builtin.slurp:
+    slurp:
       src: "{{ docker_compose_variable_secret_file.stat.path }}"
     register: docker_compose_variable_secret_file_contents
 
@@ -122,10 +122,203 @@
 
   - name: Lookup removed secret file
     stat:
-      path: "/srv/testing-secret-removal/secrets/secret-to-remove"
+      path: "/srv/testing-removal/secrets/secret-to-remove"
     register: docker_compose_removed_secret_file
 
   - name: Fail if removed secret file is found
     fail:
-      msg: "Secret that should have been removed was found at '/srv/testing-secret-removal/secrets/secret-to-remove'!"
+      msg: "Secret that should have been removed was found at '/srv/testing-removal/secrets/secret-to-remove'!"
     when: docker_compose_removed_secret_file.stat.exists
+
+  - name: Lookup composition root environment
+    stat:
+      path: "/srv/testing-composition/.env"
+    register: docker_compose_root_environment_file
+
+  - name: Fail if composition root environment file is not found
+    fail:
+      msg: "Failed to find environment file at '/srv/testing-composition/.env'!"
+    when: not docker_compose_root_environment_file.stat.exists
+
+  - name: Fail if composition root environment file is not owned by 'root'
+    fail:
+      msg: "Environment file at '/srv/testing-composition/.env' was not owned by root!"
+    when: docker_compose_root_environment_file.stat.uid != 0
+
+  - name: Check for value based field in composition root environment file
+    ansible.builtin.lineinfile:
+      path: "{{ docker_compose_root_environment_file.stat.path }}"
+      line: "env-value='some value'"
+      state: present
+    check_mode: true
+    register: docker_compose_root_environment_file_value_field
+
+  - name: Fail if value based field in composition root environment file is missing
+    fail:
+      msg: "Composition root environment file had malformed or missing field 'env-value'!"
+    when: docker_compose_root_environment_file_value_field.changed
+
+  - name: Check for variable based field in composition root environment file
+    ansible.builtin.lineinfile:
+      path: "{{ docker_compose_root_environment_file.stat.path }}"
+      line: "env-variable='some environment variable value'"
+      state: present
+    check_mode: true
+    register: docker_compose_root_environment_file_variable_field
+
+  - name: Fail if variable based field in composition root environment file is missing
+    fail:
+      msg: "Composition root environment file had malformed or missing field 'env-variable'!"
+    when: docker_compose_root_environment_file_variable_field.changed
+
+  - name: Lookup composition sub directory environment
+    stat:
+      path: "/srv/testing-composition/path-testing/.env"
+    register: docker_compose_sub_dir_environment_file
+
+  - name: Fail if composition root environment file is not found
+    fail:
+      msg: "Failed to find environment file at '/srv/testing-composition/path-testing/.env'!"
+    when: not docker_compose_sub_dir_environment_file.stat.exists
+
+  - name: Fail if composition sub directory environment file is not owned by 'root'
+    fail:
+      msg: "Environment file at '/srv/testing-composition/path-testing/.env' was not owned by root!"
+    when: docker_compose_sub_dir_environment_file.stat.uid != 0
+
+  - name: Check for value based field in composition sub directory environment file
+    ansible.builtin.lineinfile:
+      path: "{{ docker_compose_sub_dir_environment_file.stat.path }}"
+      line: "value='some value'"
+      state: present
+    check_mode: true
+    register: docker_compose_sub_dir_environment_file_value_field
+
+  - name: Fail if value based field in composition sub dir environment file is missing
+    fail:
+      msg: "Composition sub dir environment file had malformed or missing field 'value'!"
+    when: docker_compose_sub_dir_environment_file_value_field.changed
+
+  - name: Lookup composition user owned environment file
+    stat:
+      path: "/srv/testing-env-ownership/.env"
+    register: docker_compose_user_owned_environment_file
+
+  - name: Fail if composition user owned environment file is not found
+    fail:
+      msg: "Failed to find environment file at '/srv/testing-env-ownership/.env'!"
+    when: not docker_compose_user_owned_environment_file.stat.exists
+
+  - name: Fail if composition user owned environment file is not owned by 'alice'
+    fail:
+      msg: "Environment file at '/srv/testing-env-ownership/.env' was not owned by 'alice'!"
+    when: docker_compose_user_owned_environment_file.stat.uid != 3000
+
+  - name: Check for value based field in composition user owned environment file
+    ansible.builtin.lineinfile:
+      path: "{{ docker_compose_user_owned_environment_file.stat.path }}"
+      line: "value='alice should own this'"
+      state: present
+    check_mode: true
+    register: docker_compose_user_owned_environment_file_value_field
+
+  - name: Fail if value based field in composition user owned environment file is missing
+    fail:
+      msg: "Composition user owned environment file had malformed or missing field 'value'!"
+    when: docker_compose_user_owned_environment_file_value_field.changed
+
+  - name: Lookup composition custom user owned environment file
+    stat:
+      path: "/srv/testing-env-ownership/bob-owned/.env"
+    register: docker_compose_custom_user_owned_environment_file
+
+  - name: Fail if composition custom user owned environment file is not found
+    fail:
+      msg: "Failed to find environment file at '/srv/testing-env-ownership/bob-owned/.env'!"
+    when: not docker_compose_custom_user_owned_environment_file.stat.exists
+
+  - name: Fail if composition custom user owned environment file is not owned by 'bob'
+    fail:
+      msg: "Environment file at '/srv/testing-env-ownership/bob-owned/.env' was not owned by 'bob'!"
+    when: docker_compose_custom_user_owned_environment_file.stat.uid != 2000
+
+  - name: Check for value based field in composition custom user owned environment file
+    ansible.builtin.lineinfile:
+      path: "{{ docker_compose_custom_user_owned_environment_file.stat.path }}"
+      line: "value='bob should own this'"
+      state: present
+    check_mode: true
+    register: docker_compose_custom_user_owned_environment_file_value_field
+
+  - name: Fail if value based field in composition custom user owned environment file is missing
+    fail:
+      msg: "Composition custom user owned environment file had malformed or missing field 'value'!"
+    when: docker_compose_custom_user_owned_environment_file_value_field.changed
+
+  - name: Lookup composition custom user group owned environment file
+    stat:
+      path: "/srv/testing-env-ownership/bob-owner-only/.env"
+    register: docker_compose_custom_user_group_owned_environment_file
+
+  - name: Fail if composition custom user owned environment file is not found
+    fail:
+      msg: "Failed to find environment file at '/srv/testing-env-ownership/bob-owner-only/.env'!"
+    when: not docker_compose_custom_user_group_owned_environment_file.stat.exists
+
+  - name: Fail if composition custom user owned environment file is not owned by 'bob'
+    fail:
+      msg: "Environment file at '/srv/testing-env-ownership/bob-owner-only/.env' was not owned by 'bob'!"
+    when: docker_compose_custom_user_group_owned_environment_file.stat.uid != 2000
+
+  - name: Fail if composition custom user group owned environment file is not owned by 'bob'
+    fail:
+      msg: "Environment file at '/srv/testing-env-ownership/bob-owner-only/.env' was not owned by group 'bob'!"
+    when: docker_compose_custom_user_group_owned_environment_file.stat.gid != 2000
+
+  - name: Lookup composition custom user mix owned environment file
+    stat:
+      path: "/srv/testing-env-ownership/bob-and-alice/.env"
+    register: docker_compose_custom_user_mixed_owned_environment_file
+
+  - name: Fail if composition custom user mix owned environment file is not found
+    fail:
+      msg: "Failed to find environment file at '/srv/testing-env-ownership/bob-and-alice/.env'!"
+    when: not docker_compose_custom_user_mixed_owned_environment_file.stat.exists
+
+  - name: Fail if composition custom user mix owned environment file is not owned by 'alice'
+    fail:
+      msg: "Environment file at '/srv/testing-env-ownership/bob-and-alice/.env' was not owned by 'alice'!"
+    when: docker_compose_custom_user_mixed_owned_environment_file.stat.uid != 3000
+
+  - name: Fail if composition custom user mix owned environment file is not owned by group 'bob'
+    fail:
+      msg: "Environment file at '/srv/testing-env-ownership/bob-and-alice/.env' was not owned by group 'bob'!"
+    when: docker_compose_custom_user_mixed_owned_environment_file.stat.gid != 2000
+
+  - name: Lookup removed environment file
+    stat:
+      path: "/srv/testing-removal/testing-file-removal/.env"
+    register: docker_compose_removed_env_file
+
+  - name: Fail if removed secret file is found
+    fail:
+      msg: "Environment file still found at '/srv/testing-removal/testing-file-removal/.env'!"
+    when: docker_compose_removed_env_file.stat.exists
+
+  - name: Lookup environment file with field removed
+    stat:
+      path: "/srv/testing-removal/testing-field-removal/.env"
+    register: docker_compose_removed_field_env_file
+
+  - name: Check for removed field in environment file
+    ansible.builtin.lineinfile:
+      path: "{{ docker_compose_removed_field_env_file.stat.path }}"
+      line: "value='This should be removed after scenario run'"
+      state: present
+    check_mode: true
+    register: docker_compose_removed_field_env_file_field
+
+  - name: Fail if field is still found in environment file
+    fail:
+      msg: "Environment file still contained field that should have been removed!"
+    when: not docker_compose_removed_field_env_file_field.changed
