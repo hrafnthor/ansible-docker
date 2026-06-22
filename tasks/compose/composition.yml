@@ -13,9 +13,11 @@
   ansible.builtin.file:
     path: "{{ project_dir }}"
     owner: "{{ composition.owner | default('root') }}"
-    group: "{{ composition.group | default('root') }}"
+    group: "{{ composition.group | default( composition.owner | default('root')) }}"
     mode: "{{ composition.mode | default('0755') }}"
     state: "{{ 'absent' if composition.remove is defined and composition.remove else 'directory' }}"
+    modification_time: preserve
+    access_time: preserve
 
 - name: "HTH | Docker | Compose | Copy compose file"
   ansible.builtin.copy:
@@ -23,7 +25,7 @@
     dest: "{{ project_dir }}"
     force: "{{ composition.force | default(false) }}"
     owner: "{{ composition.owner | default('root') }}"
-    group: "{{ composition.group | default('root') }}"
+    group: "{{ composition.group | default( composition.owner | default('root')) }}"
     mode: "{{ composition.mode | default('0644') }}"
   when:
     - composition.remove is not defined or not composition.remove
