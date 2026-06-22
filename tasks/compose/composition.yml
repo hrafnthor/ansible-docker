@@ -16,6 +16,8 @@
     group: "{{ composition.group | default( composition.owner | default('root')) }}"
     mode: "{{ composition.mode | default('0755') }}"
     state: "{{ 'absent' if composition.remove is defined and composition.remove else 'directory' }}"
+    modification_time: preserve
+    access_time: preserve
 
 - name: "HTH | Docker | Compose | Copy compose file"
   ansible.builtin.copy:
