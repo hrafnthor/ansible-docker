@@ -1,13 +1,13 @@
 # -----------------------------------------------------------------------------
 #
-# This file contains tasks related to managing env variables under
+# This file contains tasks related to managing environment variables under
 # a specific path.
 #
 # -----------------------------------------------------------------------------
 
 - name: "HTH | Docker | Environment | Set directory path"
   ansible.builtin.set_fact:
-    environment_path: "{{ project_dir }}/{{ env.path }}"
+    environment_path: "{{ project_dir }}{{ '/' ~ env.path if env.path | default('') | length > 0 else '' }}"
 
 - name: "HTH | Docker | Environment | Create directory"
   ansible.builtin.file:
