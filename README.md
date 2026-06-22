@@ -65,19 +65,21 @@ docker:
         group: [string]                 The remote group who should own the project directory, else `root`.
         secrets:
           - name: [string]              [Required] The name of the file containing the secret at `<project-dir>/secrets/name`.
-            value: [string | number]    The value to set in the secret file. Mutually exlusive with `variable`.
-            variable: [string]          The variable holding the value to set in the secret file. Mutually exlusive with `value`.
+            value: [string | number]    The value to set in the secret file. Mutually exclusive with `variable`.
+            variable: [string]          The variable holding the value to set in the secret file. Mutually exclusive with `value`.
+            owner: [string]             The user that will own the file containing the secret. If not set will default to 'root'.
+            group: [string]             The user group that will own the file containing the secret. If not set, will default to the same value used as the owner.
             remove: [bool]              Indicates that this named secret should be removed.
         environments:
           - mode: [string]              The access mode that the environment file will be given. Defaults to '0644'
             owner: [string]             The user that should own the .env file. If not set defaults to the composition user. If they are not set, defaults to root.
-            group: [string]             The group that should own the .env file. If not set defaults to the composition group. If they are not set, defaults to root.
-            path: [string]              [required] The path relative to the source directory where the .env file should be created.
+            group: [string]             The group that should own the .env file. If not supplied, it will default to the same value as used for the owner.
+            path: [string]              The path relative to the source directory where the .env file should be created. Will equate the composition destination directory if omitted.
             remove: [bool]              Indicates if the environment file at the given path should be removed. If true, no file will be created. Defaults to false.
             entries:                    [required] Contains the environment variable entries to place in the .env file.
             - name: [string]            [Required] The name of the variable.
-              value: [string | number]  The value to set the variable to. Mutually exlusive with `variable`.
-              variable: [string]        The variable holding the value to set the env variable to. Mutually exlusive with `value`.
+              value: [string | number]  The value to set the variable to. Mutually exclusive with `variable`.
+              variable: [string]        The variable holding the value to set the env variable to. Mutually exclusive with `value`.
               remove: [bool]            Indicates that this named variable should be removed.
         extras:
           - source: [string]            The source to copy. This can either be a file or a directory. If not defined then no copying action will take place. However, management of a destination will so this is a way to create directory structures without having anything to copy into them.
