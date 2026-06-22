@@ -9,33 +9,31 @@
   ansible.builtin.set_fact:
     environment_path: "{{ project_dir }}{{ '/' ~ env.path if env.path | default('') | length > 0 else '' }}"
 
-- name: "HTH | Docker | Environment | Create directory"
+- name: "HTH | Docker | Environment | Manage directory"
   ansible.builtin.file:
     path: "{{ environment_path }}"
-    owner: "{{ env.owner | default(composition.user | default('root')) }}"
-    group: "{{ env.group | default(composition.group | default('root')) }}"
-    modification_time: "preserve"
-    access_time: "preserve"
-    state: "directory"
-    recurse: true
+    owner: "{{ env.owner | default( composition.owner | default('root'))}}"
+    group: "{{ env.group | default(env.owner | default( composition.group | default( composition.owner | default('root')))) }}"
+    state: directory
+    modification_time: preserve
+    access_time: preserve
   when:
     - env.remove is not defined or not env.remove
+    - environment_path != project_dir
 
 - name: "HTH | Docker | Environment | Set file path"
   ansible.builtin.set_fact:
     environment_file: "{{ environment_path }}/.env"
 
-- name: "HTH | Docker | Environment | Create file"
+- name: "HTH | Docker | Environment | Manage file"
   ansible.builtin.file:
     path: "{{ environment_file }}"
-    state: "touch"
-    owner: "{{ env.owner | default(composition.user | default('root')) }}"
-    group: "{{ env.group | default(composition.group | default('root')) }}"
-    modification_time: "preserve"
-    access_time: "preserve"
+    owner: "{{ env.owner | default(composition.owner | default('root')) }}"
+    group: "{{ env.group | default(env.owner | default(composition.group | default( composition.owner | default('root'))))}}"
     mode: "{{ env.mode | default('0644')}}"
-  when:
-    - env.remove is not defined or not env.remove
+    state: "{{ 'absent' if (env.remove is defined and env.remove) else 'touch' }}"
+    modification_time: preserve
+    access_time: preserve
 
 - name: "HTH | Docker | Environment | Manage entries"
   ansible.builtin.include_tasks: variable.yml
@@ -44,11 +42,3 @@
     loop_var: entry
   when:
     - env.remove is not defined or not env.remove
-
-- name: "HTH | Docker | Environment | Remove file"
-  ansible.builtin.file:
-    path: "{{ environment_file }}"
-    state: "absent"
-  when:
-    - env.remove is defined
-    - env.remove
