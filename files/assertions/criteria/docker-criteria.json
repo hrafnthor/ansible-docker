@@ -275,6 +275,11 @@
                                         "remove":
                                         {
                                             "type": "boolean"
+                                        },
+                                        "force":
+                                        {
+                                            "description": "Indicates that the secret content should always be set, even when a file with this name already exists. Breaks idempotency. Defaults to false",
+                                            "type": "boolean"
                                         }
                                     },
                                     "required":
