@@ -70,6 +70,11 @@
       msg: "Value based secret file 'secret-value' did not contain the expected value!"
     when: (docker_compose_value_secret_file_contents.content | b64decode) == "very secret value"
 
+  - name: Fail when value secret file contents ends with newline
+    fail:
+      msg: "Value based secret file 'secret-value' ends with a newline!"
+    when: (docker_compose_value_secret_file_contents.content | b64decode).endswith('\n')
+
   - name: Lookup variable secret file
     stat:
       path: "/srv/testing-composition/secrets/secret-variable"
@@ -99,6 +104,11 @@
     fail:
       msg: "Variable based secret file 'secret-variable' did not contain the expected value!"
     when: (docker_compose_variable_secret_file_contents.content | b64decode) == "super secret variable"
+
+  - name: Fail when variable secret file contents ends with newline
+    fail:
+      msg: "Variable based secret file 'secret-value' ends with a newline!"
+    when: (docker_compose_variable_secret_file_contents.content | b64decode).endswith('\n')
 
   - name: Lookup user owned secret file
     stat:
