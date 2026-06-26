@@ -11,7 +11,6 @@
       docker:
         version: latest
         compose:
-          version: latest
           compositions:
             - name: "testing-composition"
               source: "docker-compose.yml"

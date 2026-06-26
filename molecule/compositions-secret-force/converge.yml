@@ -1,0 +1,23 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+  - role: hth.docker
+    vars:
+      secret_variable: "a new secret variable"
+      docker:
+        version: latest
+        compose:
+          compositions:
+            - name: "testing-composition"
+              source: "docker-compose.yml"
+              destination: "/srv/testing-composition"
+              secrets:
+                - name: "secret-value"
+                  value: "a new secret value"
+                  force: true
+                - name: "secret-variable"
+                  variable: "secret_variable"
+                  force: true
