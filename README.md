@@ -55,7 +55,6 @@ docker:
     key:    [string]                    The path to the signing key that should be used for the Docker repository. If missing, then the repositories own remote key will be used for signing.
   priority: [bool]                      Indicates if docker related packages should be prioritized from this repository and others blocked. Defaults to false.
   compose:
-    version: [string]                   [Required] Indicates the version of `Docker Compose` to install. Can be set to 'latest' for the latest version.
     remove: [bool]
     compositions:
       - name: [string]                  [Required]	Used as project directory name if `destination` is not found.
@@ -70,6 +69,7 @@ docker:
             owner: [string]             The user that will own the file containing the secret. If not set will default to 'root'.
             group: [string]             The user group that will own the file containing the secret. If not set, will default to the same value used as the owner.
             remove: [bool]              Indicates that this named secret should be removed.
+            force:  [bool]              Indicates that this secret should always be updated. Will break idempotency. Defaults to false.
         environments:
           - mode: [string]              The access mode that the environment file will be given. Defaults to '0644'
             owner: [string]             The user that should own the .env file. If not set defaults to the composition user. If they are not set, defaults to root.
@@ -100,7 +100,6 @@ docker:
 docker:
   version: "5:27.4.1-1~ubuntu.22.04~jammy"
   compose:
-    version: "2.32.1-1~ubuntu.22.04~jammy"
     compositions:
       - name: "example-project"
         source: "/docker/example-project/docker-compose.yml"
