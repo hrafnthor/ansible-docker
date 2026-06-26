@@ -62,10 +62,9 @@
 
 - name: "HTH | Docker | Debian | Manage Docker Compose package"
   ansible.builtin.apt:
-    name: "{{ hth_docker_compose_package_name + '=' + docker.compose.version if docker.compose.version is defined and docker.compose.version != 'latest' else hth_docker_compose_package_name }}"
+    name: "{{ hth_docker_compose_package_name }}"
     state: >-
-      {{ 'absent' if (docker.compose.remove is defined and docker.remove.compose.remove) or (docker.remove is defined and docker.remove)
-          else 'present' if docker.compose.version is defined and docker.compose.version != 'latest'
+      {{ 'absent' if (docker.compose.remove is defined and docker.compose.remove) or (docker.remove is defined and docker.remove)
           else 'latest' }}
   when:
     - docker.compose is defined or (docker.remove is defined and docker.remove)

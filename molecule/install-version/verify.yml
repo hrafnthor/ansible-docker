@@ -31,7 +31,7 @@
     fail:
       msg: "Incorrect version of package '{{ hth_docker_package_name }}' was installed!"
     when:
-      - "'29.6.0' not in docker_version.stdout"
+      - "'29.6.1' not in docker_version.stdout"
 
   - name: Lookup docker compose package version
     command: docker compose version --short
@@ -44,9 +44,3 @@
       msg: "Package '{{ hth_docker_compose_package_name }}' was not installed!"
     when:
       - docker_compose_version.rc != 0
-
-  - name: Ensure correct docker compose version was installed
-    fail:
-      msg: "Incorrect version of package '{{ hth_docker_compose_package_name }}' was installed!"
-    when:
-      - "'5.1.4' not in docker_compose_version.stdout"

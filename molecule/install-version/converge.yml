@@ -10,4 +10,4 @@
         version: "5:29.6.0-1~ubuntu.24.04~noble"
         priority: true
         compose:
-          version: "5.1.4-1~ubuntu.24.04~noble"
+          remove: false
