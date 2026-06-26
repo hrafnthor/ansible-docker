@@ -1,28 +1,3 @@
-Package: docker-ce
-Pin: origin download.docker.com
-Pin-Priority: 1000
-
-Package: docker-ce-cli
-Pin: origin download.docker.com
-Pin-Priority: 1000
-
-Package: docker-ce-rootless-extras
-Pin: origin download.docker.com
-Pin-Priority: 1000
-
-Package: containerd.io
-Pin: origin download.docker.com
-Pin-Priority: 1000
-
-Package: docker-buildx-plugin
-Pin: origin download.docker.com
-Pin-Priority: 1000
-
-Package: docker-compose-plugin
-Pin: origin download.docker.com
-Pin-Priority: 1000
-
-# Block all other packages
 Package: *
-Pin: origin download.docker.com
-Pin-Priority: -1
+Pin: origin "download.docker.com"
+Pin-Priority: 100

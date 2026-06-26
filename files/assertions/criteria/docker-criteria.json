@@ -38,10 +38,6 @@
             "type": "object",
             "properties":
             {
-                "version":
-                {
-                    "$ref": "#/definitions/non-empty-string"
-                },
                 "remove":
                 {
                     "type": "boolean"
