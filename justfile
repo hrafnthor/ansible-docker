@@ -33,3 +33,7 @@ test-repository-local-signing *EXTRA:
 # Tests only the composition management scenario
 test-compositions *EXTRA:
   @just test --scenario-name compositions {{EXTRA}}
+
+# Tests only the composition force replacement of secrets scenario. Runs without idempotency test.
+test-compositions-secret-force *EXTRA:
+  @just test --scenario-name compositions-secret-force {{EXTRA}}

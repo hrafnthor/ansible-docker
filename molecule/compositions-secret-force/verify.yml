@@ -1,0 +1,56 @@
+---
+- name: Verify
+  hosts: all
+  vars_files:
+    - "../../defaults/main.yml"
+  tasks:
+
+  - name: Lookup secret directory
+    stat:
+      path: "/srv/testing-composition/secrets"
+    register: docker_compose_secrets_dir
+
+  - name: Fail if secrets directory doesn't exist
+    fail:
+      msg: "Secrets directory was not found at '/srv/testing-composition/secrets'!"
+    when: not docker_compose_secrets_dir.stat.exists
+
+  - name: Lookup value secret file
+    stat:
+      path: "/srv/testing-composition/secrets/secret-value"
+    register: docker_compose_value_secret_file
+
+  - name: Fail if value secret file does not exist
+    fail:
+      msg: "Value based secret file 'secret-value' was not found!"
+    when: not docker_compose_value_secret_file.stat.exists
+
+  - name: Read value secret file contents
+    slurp:
+      src: "{{ docker_compose_value_secret_file.stat.path }}"
+    register: docker_compose_value_secret_file_contents
+
+  - name: Fail when value secret file contents mismatches expected values
+    fail:
+      msg: "Value based secret file 'secret-value' did not contain the expected value!"
+    when: (docker_compose_value_secret_file_contents.content | b64decode) != "a new secret value"
+
+  - name: Lookup variable secret file
+    stat:
+      path: "/srv/testing-composition/secrets/secret-variable"
+    register: docker_compose_variable_secret_file
+
+  - name: Fail if variable secret file does not exist
+    fail:
+      msg: "Variable based secret file 'secret-variable' was not found!"
+    when: not docker_compose_variable_secret_file.stat.exists
+
+  - name: Read variable secret file contents
+    slurp:
+      src: "{{ docker_compose_variable_secret_file.stat.path }}"
+    register: docker_compose_variable_secret_file_contents
+
+  - name: Fail when variable secret file contents mismatches expected values
+    fail:
+      msg: "Variable based secret file 'secret-variable' did not contain the expected value!"
+    when: (docker_compose_variable_secret_file_contents.content | b64decode) != "a new secret variable"

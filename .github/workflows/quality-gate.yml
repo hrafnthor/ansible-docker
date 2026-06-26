@@ -45,3 +45,6 @@ jobs:
 
     - name: Test compositions
       run: molecule test --scenario-name compositions
+
+    - name: Test compositions-secret-force
+      run: molecule test --scenario-name compositions-secret-force
